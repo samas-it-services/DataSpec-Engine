@@ -1,6 +1,6 @@
 {
   "name": "@samas-it-services/dataspec-supabase-adapter",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Supabase database adapter for DataSpec Engine",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -42,7 +42,7 @@
     "@supabase/supabase-js": "^2.49.0"
   },
   "peerDependencies": {
-    "@samas-it-services/dataspec-core": "^0.1.0"
+    "@samas-it-services/dataspec-core": "^0.2.0"
   },
   "devDependencies": {
     "@samas-it-services/dataspec-core": "*",

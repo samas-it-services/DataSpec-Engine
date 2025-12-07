@@ -7,11 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [0.2.0] - 2025-12-06
+## [0.2.0] - 2025-12-07
 
-### Phase 4 Complete: API Service
+### Phase 4 Complete: API Service & Publishing Infrastructure
 
-#### Added - API Package (`@dataspec-engine/api`)
+#### Added - NPM Publishing Infrastructure
+- **GitHub Package Registry** - All packages published under `@samas-it-services` scope
+- **Automated Publishing Workflow** - `.github/workflows/publish.yml` for CI/CD
+- **Manual Publishing Script** - `scripts/publish.sh` with version management
+- **Registry Configuration** - `.npmrc` for GitHub Packages authentication
+
+#### Published Packages
+| Package | Version | Registry |
+|---------|---------|----------|
+| `@samas-it-services/dataspec-core` | 0.2.0 | npm.pkg.github.com |
+| `@samas-it-services/dataspec-supabase-adapter` | 0.2.0 | npm.pkg.github.com |
+| `@samas-it-services/dataspec-react` | 0.2.0 | npm.pkg.github.com |
+| `@samas-it-services/dataspec-api` | 0.2.0 | npm.pkg.github.com |
+
+#### Added - SAMAS Integration Case Study
+- **Comprehensive Integration Guide** - `docs/CASE-STUDY-SAMAS-INTEGRATION.md`
+- **ERR_INSUFFICIENT_RESOURCES Fix** - Documented React Strict Mode compatibility patterns
+- **Auth Adapter Pattern** - Recommendations for integrating with existing auth systems
+- **Request Management** - Patterns for request deduplication and caching
+- **CSS Theme Mapping** - BEM-to-Tailwind styling approach
+
+#### Added - API Package (`@samas-it-services/dataspec-api`)
 - **Express REST API** - Full-featured API with 8 endpoints
   - `GET /dataspec/entities` - List available entities
   - `GET /dataspec/specs` - List specs for an entity
@@ -46,6 +67,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Docker** - Self-hosted container deployment
 - **Supabase Edge Functions** - Client-hosted on Supabase
 - **Hybrid** - Recommended: light ops on Edge, heavy on Docker
+
+#### Integration Lessons Learned
+- React 18 Strict Mode requires careful useEffect dependency management
+- Auth objects should not be direct useEffect dependencies (use refs)
+- Request deduplication prevents ERR_INSUFFICIENT_RESOURCES errors
+- Response caching with TTL reduces API load
 
 ---
 
@@ -127,14 +154,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Roadmap
 
 ### [0.3.0] - Planned
-- Integration examples
+- Integration examples for Firebase, Auth0, NextAuth
 - E2E testing with Playwright
 - Performance optimizations
 - Additional export formats
+- Built-in react-query integration for request management
 
 ---
 
 ## Migration Guide
+
+### From 0.1.0 to 0.2.0
+
+**Package Scope Change**: Packages are now published under `@samas-it-services` scope.
+
+```bash
+# Old
+npm install @dataspec-engine/core @dataspec-engine/react
+
+# New
+npm install @samas-it-services/dataspec-core @samas-it-services/dataspec-react
+```
+
+**Update imports**:
+```tsx
+// Old
+import { DataSpecProvider } from '@dataspec-engine/react';
+
+// New
+import { DataSpecProvider } from '@samas-it-services/dataspec-react';
+```
+
+**GitHub Package Registry Setup**: Add `.npmrc` file:
+```
+@samas-it-services:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
+```
 
 ### From 0.0.x to 0.1.0
 
@@ -143,11 +198,11 @@ No breaking changes. React package is a new addition.
 To add React components:
 
 ```bash
-npm install @dataspec-engine/react
+npm install @samas-it-services/dataspec-react
 ```
 
 ```tsx
-import { DataSpecProvider, EntitySelector } from '@dataspec-engine/react';
+import { DataSpecProvider, EntitySelector } from '@samas-it-services/dataspec-react';
 ```
 
 ---

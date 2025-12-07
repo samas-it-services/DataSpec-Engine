@@ -1,6 +1,6 @@
 {
   "name": "@samas-it-services/dataspec-react",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "React UI components for DataSpec Engine",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -47,7 +47,7 @@
   },
   "homepage": "https://github.com/samas-it-services/DataSpec-Engine/tree/main/packages/react#readme",
   "peerDependencies": {
-    "@samas-it-services/dataspec-core": "^0.1.0",
+    "@samas-it-services/dataspec-core": "^0.2.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0"
   },

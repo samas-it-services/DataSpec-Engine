@@ -1,6 +1,6 @@
 {
   "name": "@samas-it-services/dataspec-core",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Core engine for DataSpec - YAML parsing, validation, transformation, masking",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

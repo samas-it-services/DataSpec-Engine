@@ -1,16 +1,21 @@
 {
-  "name": "@dataspec-engine/supabase-adapter",
+  "name": "@samas-it-services/dataspec-supabase-adapter",
   "version": "0.1.0",
   "description": "Supabase database adapter for DataSpec Engine",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "scripts": {
     "build": "tsc",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "clean": "rm -rf dist",
-    "lint": "eslint src/**/*.ts"
+    "lint": "eslint src/**/*.ts",
+    "prepublishOnly": "npm run build"
   },
   "keywords": [
     "dataspec",
@@ -20,13 +25,27 @@
   ],
   "author": "SAMAS IT Services",
   "license": "ISC",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "restricted"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/samas-it-services/DataSpec-Engine.git",
+    "directory": "packages/supabase-adapter"
+  },
+  "bugs": {
+    "url": "https://github.com/samas-it-services/DataSpec-Engine/issues"
+  },
+  "homepage": "https://github.com/samas-it-services/DataSpec-Engine/tree/main/packages/supabase-adapter#readme",
   "dependencies": {
     "@supabase/supabase-js": "^2.49.0"
   },
   "peerDependencies": {
-    "@dataspec-engine/core": "^0.1.0"
+    "@samas-it-services/dataspec-core": "^0.1.0"
   },
   "devDependencies": {
+    "@samas-it-services/dataspec-core": "*",
     "@types/jest": "^29.5.0",
     "@types/node": "^20.10.0",
     "jest": "^29.7.0",

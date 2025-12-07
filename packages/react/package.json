@@ -1,5 +1,5 @@
 {
-  "name": "@dataspec-engine/react",
+  "name": "@samas-it-services/dataspec-react",
   "version": "0.1.0",
   "description": "React UI components for DataSpec Engine",
   "main": "./dist/index.js",
@@ -10,13 +10,18 @@
       "types": "./dist/index.d.ts"
     }
   },
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "scripts": {
     "build": "tsc",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "clean": "rm -rf dist",
-    "lint": "eslint src/**/*.{ts,tsx}"
+    "lint": "eslint src/**/*.{ts,tsx}",
+    "prepublishOnly": "npm run build"
   },
   "keywords": [
     "dataspec",
@@ -28,12 +33,26 @@
   ],
   "author": "SAMAS IT Services",
   "license": "ISC",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "restricted"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/samas-it-services/DataSpec-Engine.git",
+    "directory": "packages/react"
+  },
+  "bugs": {
+    "url": "https://github.com/samas-it-services/DataSpec-Engine/issues"
+  },
+  "homepage": "https://github.com/samas-it-services/DataSpec-Engine/tree/main/packages/react#readme",
   "peerDependencies": {
-    "@dataspec-engine/core": "^0.1.0",
+    "@samas-it-services/dataspec-core": "^0.1.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0"
   },
   "devDependencies": {
+    "@samas-it-services/dataspec-core": "*",
     "@swc/core": "^1.15.3",
     "@swc/jest": "^0.2.39",
     "@testing-library/jest-dom": "^6.4.0",

@@ -19,6 +19,6 @@ module.exports = {
     },
   },
   moduleNameMapper: {
-    '^@dataspec-engine/core$': '<rootDir>/../core/src',
+    '^@samas-it-services/dataspec-core$': '<rootDir>/../core/src',
   },
 };

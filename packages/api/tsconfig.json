@@ -17,10 +17,12 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "moduleResolution": "node",
-    "baseUrl": "./src",
+    "baseUrl": ".",
     "paths": {
-      "@core/*": ["core/*"],
-      "@express/*": ["express/*"]
+      "@core/*": ["src/core/*"],
+      "@express/*": ["src/express/*"],
+      "@samas/dataspec-core": ["../core/src"],
+      "@samas/dataspec-supabase-adapter": ["../supabase-adapter/src"]
     },
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -28,5 +30,9 @@
     "resolveJsonModule": true
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/__tests__/**"]
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/__tests__/**"],
+  "references": [
+    { "path": "../core" },
+    { "path": "../supabase-adapter" }
+  ]
 }

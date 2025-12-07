@@ -20,9 +20,9 @@ module.exports = {
     },
   },
   moduleNameMapper: {
-    '^@dataspec-engine/core$': '<rootDir>/packages/core/src',
-    '^@dataspec-engine/supabase-adapter$': '<rootDir>/packages/supabase-adapter/src',
-    '^@dataspec-engine/react$': '<rootDir>/packages/react/src',
-    '^@dataspec-engine/api$': '<rootDir>/packages/api/src',
+    '^@samas/dataspec-core$': '<rootDir>/packages/core/src',
+    '^@samas/dataspec-supabase-adapter$': '<rootDir>/packages/supabase-adapter/src',
+    '^@samas/dataspec-react$': '<rootDir>/packages/react/src',
+    '^@samas/dataspec-api$': '<rootDir>/packages/api/src',
   },
 };

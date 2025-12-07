@@ -3,7 +3,7 @@
  */
 
 import { SupabaseAdapter, DatabaseError } from '../SupabaseAdapter';
-import { QueryBuilder, OperationStatus } from '@dataspec-engine/core';
+import { QueryBuilder, OperationStatus } from '@samas-it-services/dataspec-core';
 
 // Helper to create QueryBuilder with optional fields
 const createQuery = (overrides: Partial<QueryBuilder> = {}): QueryBuilder => ({

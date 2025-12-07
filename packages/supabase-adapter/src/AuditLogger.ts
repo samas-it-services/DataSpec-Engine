@@ -6,7 +6,7 @@
  */
 
 import { SupabaseClient } from '@supabase/supabase-js';
-import { OperationStatus } from '@dataspec-engine/core';
+import { OperationStatus } from '@samas-it-services/dataspec-core';
 
 /**
  * Audit event types

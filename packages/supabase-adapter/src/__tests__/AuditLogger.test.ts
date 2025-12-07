@@ -8,7 +8,7 @@ import {
   UnmaskAuditEntry,
   AuditEventType
 } from '../AuditLogger';
-import { OperationStatus } from '@dataspec-engine/core';
+import { OperationStatus } from '@samas-it-services/dataspec-core';
 
 // Mock Supabase client
 const createMockSupabaseClient = () => {

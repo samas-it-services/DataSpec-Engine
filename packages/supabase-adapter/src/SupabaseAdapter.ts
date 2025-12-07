@@ -14,7 +14,7 @@ import {
   DeleteResult,
   Transaction,
   OperationLog
-} from '@dataspec-engine/core';
+} from '@samas-it-services/dataspec-core';
 
 /**
  * Database error

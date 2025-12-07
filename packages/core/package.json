@@ -1,26 +1,46 @@
 {
-  "name": "@dataspec-engine/core",
+  "name": "@samas-it-services/dataspec-core",
   "version": "0.1.0",
   "description": "Core engine for DataSpec - YAML parsing, validation, transformation, masking",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "scripts": {
     "build": "tsc",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "clean": "rm -rf dist",
-    "lint": "eslint src/**/*.ts"
+    "lint": "eslint src/**/*.ts",
+    "prepublishOnly": "npm run build"
   },
   "keywords": [
     "dataspec",
     "yaml",
     "validation",
     "transformation",
-    "masking"
+    "masking",
+    "data-import",
+    "data-export"
   ],
   "author": "SAMAS IT Services",
   "license": "ISC",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "restricted"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/samas-it-services/DataSpec-Engine.git",
+    "directory": "packages/core"
+  },
+  "bugs": {
+    "url": "https://github.com/samas-it-services/DataSpec-Engine/issues"
+  },
+  "homepage": "https://github.com/samas-it-services/DataSpec-Engine/tree/main/packages/core#readme",
   "dependencies": {
     "yaml": "^2.4.0",
     "ajv": "^8.12.0",

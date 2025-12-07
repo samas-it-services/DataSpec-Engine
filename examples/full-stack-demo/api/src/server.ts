@@ -444,7 +444,7 @@ app.post('/dataspec/export', (req: Request, res: Response) => {
     const headers = Object.keys(maskedData[0]);
     const csv = [
       headers.join(','),
-      ...maskedData.map((row) => headers.map((h) => row[h]).join(',')),
+      ...maskedData.map((row) => headers.map((h) => (row as Record<string, unknown>)[h]).join(',')),
     ].join('\n');
 
     return res.json({

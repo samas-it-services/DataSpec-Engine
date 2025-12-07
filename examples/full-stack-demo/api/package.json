@@ -9,8 +9,8 @@
     "dev": "npx ts-node-dev src/server.ts"
   },
   "dependencies": {
-    "@dataspec-engine/api": "*",
-    "@dataspec-engine/core": "*",
+    "@dataspec-engine/api": "file:../../../packages/api",
+    "@dataspec-engine/core": "file:../../../packages/core",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2"

@@ -266,7 +266,8 @@ export function DataSpecProvider({ config, userRoles, children }: DataSpecProvid
     dispatch({ type: 'SET_ERROR', payload: null });
 
     try {
-      const entities = await apiRequest<EntityDefinition[]>(config, '/dataspec/entities');
+      const response = await apiRequest<{ success: boolean; data: { entities: EntityDefinition[] } }>(config, '/dataspec/entities');
+      const entities = response.data?.entities || [];
       dispatch({ type: 'SET_ENTITIES', payload: entities });
     } catch (error) {
       dispatch({ type: 'SET_ERROR', payload: (error as Error).message });
@@ -281,10 +282,11 @@ export function DataSpecProvider({ config, userRoles, children }: DataSpecProvid
     dispatch({ type: 'SET_ERROR', payload: null });
 
     try {
-      const specs = await apiRequest<SpecDefinition[]>(
+      const response = await apiRequest<{ success: boolean; data: { specs: SpecDefinition[] } }>(
         config,
         `/dataspec/specs?entity=${entityId}`
       );
+      const specs = response.data?.specs || [];
       dispatch({ type: 'SET_SPECS', payload: specs });
     } catch (error) {
       dispatch({ type: 'SET_ERROR', payload: (error as Error).message });

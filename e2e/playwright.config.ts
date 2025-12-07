@@ -39,8 +39,11 @@ export default defineConfig({
     // Collect trace when retrying the failed test
     trace: 'on-first-retry',
 
-    // Take screenshot on failure
-    screenshot: 'only-on-failure',
+    // Take screenshot for all tests (for documentation)
+    screenshot: 'on',
+
+    // Video recording for debugging
+    video: 'on-first-retry',
   },
 
   // Configure projects for major browsers
@@ -77,15 +80,16 @@ export default defineConfig({
   ],
 
   // Run your local dev server before starting the tests
-  webServer: [
+  // Note: Set SKIP_WEBSERVER=true to run API tests against an already-running server
+  webServer: process.env.SKIP_WEBSERVER ? undefined : [
     {
-      command: 'cd examples/full-stack-demo/api && npm run dev',
+      command: 'cd ../examples/full-stack-demo/api && npm run dev',
       url: 'http://localhost:3000/health',
       reuseExistingServer: !process.env.CI,
       timeout: 120 * 1000,
     },
     {
-      command: 'cd examples/full-stack-demo/frontend && npm run dev',
+      command: 'cd ../examples/full-stack-demo/frontend && npm run dev',
       url: 'http://localhost:3001',
       reuseExistingServer: !process.env.CI,
       timeout: 120 * 1000,

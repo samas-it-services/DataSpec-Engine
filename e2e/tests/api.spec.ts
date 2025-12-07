@@ -10,11 +10,8 @@ import { DataSpecApiClient } from '../helpers/api-client';
 const API_URL = process.env.E2E_API_URL || 'http://localhost:3000';
 
 test.describe('DataSpec API Endpoints', () => {
-  let api: DataSpecApiClient;
-
-  test.beforeAll(async ({ request }) => {
-    api = new DataSpecApiClient(request, API_URL);
-  });
+  // Note: Each test creates its own API client using the request fixture
+  // This is required because Playwright fixtures cannot be reused from beforeAll
 
   test.describe('Health Check', () => {
     test('should return health status', async ({ request }) => {
@@ -29,6 +26,7 @@ test.describe('DataSpec API Endpoints', () => {
 
   test.describe('Entities API', () => {
     test('should list all entities', async ({ request }) => {
+      const api = new DataSpecApiClient(request, API_URL);
       const result = await api.listEntities();
 
       expect(result.success).toBe(true);
@@ -37,6 +35,7 @@ test.describe('DataSpec API Endpoints', () => {
     });
 
     test('should include spec count when requested', async ({ request }) => {
+      const api = new DataSpecApiClient(request, API_URL);
       const result = await api.listEntities(true);
 
       expect(result.success).toBe(true);
@@ -49,6 +48,7 @@ test.describe('DataSpec API Endpoints', () => {
 
   test.describe('Specs API', () => {
     test('should list all specs', async ({ request }) => {
+      const api = new DataSpecApiClient(request, API_URL);
       const result = await api.listSpecs();
 
       expect(result.success).toBe(true);
@@ -57,6 +57,7 @@ test.describe('DataSpec API Endpoints', () => {
     });
 
     test('should filter specs by entity', async ({ request }) => {
+      const api = new DataSpecApiClient(request, API_URL);
       const result = await api.listSpecs('users');
 
       expect(result.success).toBe(true);
@@ -71,6 +72,7 @@ test.describe('DataSpec API Endpoints', () => {
 
   test.describe('YAML Validation', () => {
     test('should validate correct YAML', async ({ request }) => {
+      const api = new DataSpecApiClient(request, API_URL);
       const validYaml = `version: "1.0"
 metadata:
   entity: users
@@ -86,6 +88,7 @@ columns:
     });
 
     test('should reject invalid YAML', async ({ request }) => {
+      const api = new DataSpecApiClient(request, API_URL);
       const invalidYaml = `invalid yaml without required fields`;
 
       const result = await api.validateYaml(invalidYaml);
@@ -98,6 +101,7 @@ columns:
 
   test.describe('Import Preview', () => {
     test('should preview CSV import', async ({ request }) => {
+      const api = new DataSpecApiClient(request, API_URL);
       const csvContent = `first_name,last_name,email
 John,Doe,john@test.com
 Jane,Smith,jane@test.com`;
@@ -115,6 +119,7 @@ Jane,Smith,jane@test.com`;
     });
 
     test('should detect validation errors', async ({ request }) => {
+      const api = new DataSpecApiClient(request, API_URL);
       const csvContent = `first_name,last_name,email
 John,Doe,invalid-email
 Jane,Smith,jane@test.com`;
@@ -130,6 +135,7 @@ Jane,Smith,jane@test.com`;
     });
 
     test('should respect maxRows limit', async ({ request }) => {
+      const api = new DataSpecApiClient(request, API_URL);
       const csvContent = `first_name,last_name,email
 Row1,Test,row1@test.com
 Row2,Test,row2@test.com
@@ -152,6 +158,7 @@ Row5,Test,row5@test.com`;
 
   test.describe('Import Execute', () => {
     test('should execute import', async ({ request }) => {
+      const api = new DataSpecApiClient(request, API_URL);
       const csvContent = `first_name,last_name,email
 Test,User,test${Date.now()}@example.com`;
 
@@ -168,6 +175,7 @@ Test,User,test${Date.now()}@example.com`;
 
   test.describe('Export', () => {
     test('should export data as JSON', async ({ request }) => {
+      const api = new DataSpecApiClient(request, API_URL);
       const result = await api.exportData('users', 'json', true);
 
       expect(result.success).toBe(true);
@@ -175,6 +183,7 @@ Test,User,test${Date.now()}@example.com`;
     });
 
     test('should export data as CSV', async ({ request }) => {
+      const api = new DataSpecApiClient(request, API_URL);
       const result = await api.exportData('users', 'csv', false);
 
       expect(result.success).toBe(true);
@@ -184,6 +193,7 @@ Test,User,test${Date.now()}@example.com`;
 
   test.describe('Masking', () => {
     test('should mask value with partial mode', async ({ request }) => {
+      const api = new DataSpecApiClient(request, API_URL);
       const result = await api.maskValue('john.doe@example.com', 'partial');
 
       expect(result.success).toBe(true);
@@ -192,6 +202,7 @@ Test,User,test${Date.now()}@example.com`;
     });
 
     test('should mask value with full mode', async ({ request }) => {
+      const api = new DataSpecApiClient(request, API_URL);
       const result = await api.maskValue('secret-password', 'full');
 
       expect(result.success).toBe(true);

@@ -1,0 +1,41 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e4]:
+  - heading "DataSpec Import Wizard" [level=1] [ref=e5]
+  - generic [ref=e6]:
+    - generic [ref=e7]:
+      - generic [ref=e8]: "1"
+      - text: Entity
+    - generic [ref=e9]:
+      - generic [ref=e10]: "2"
+      - text: Spec
+    - generic [ref=e11]:
+      - generic [ref=e12]: "3"
+      - text: Upload
+    - generic [ref=e13]:
+      - generic [ref=e14]: "4"
+      - text: Preview
+    - generic [ref=e15]:
+      - generic [ref=e16]: "5"
+      - text: Complete
+  - generic [ref=e18]:
+    - heading "Select Entity" [level=2] [ref=e19]
+    - paragraph [ref=e20]: Choose the type of data you want to import.
+    - generic [ref=e22]:
+      - button "users User accounts" [ref=e23]:
+        - img [ref=e25]
+        - generic [ref=e27]:
+          - heading "users" [level=3] [ref=e28]
+          - paragraph [ref=e29]: User accounts
+      - button "products Product catalog" [ref=e30]:
+        - img [ref=e32]
+        - generic [ref=e34]:
+          - heading "products" [level=3] [ref=e35]
+          - paragraph [ref=e36]: Product catalog
+      - button "transactions Financial transactions" [ref=e37]:
+        - img [ref=e39]
+        - generic [ref=e41]:
+          - heading "transactions" [level=3] [ref=e42]
+          - paragraph [ref=e43]: Financial transactions
+```

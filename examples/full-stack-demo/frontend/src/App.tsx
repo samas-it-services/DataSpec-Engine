@@ -11,8 +11,7 @@ import {
   FileUpload,
   PreviewTable,
   ImportProgress,
-  useDataSpec,
-  useImport,
+  useDataSpecContext,
 } from '@dataspec-engine/react';
 
 // Configuration
@@ -23,16 +22,21 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 // ============================================================================
 
 function ImportWizard() {
-  const { state, setEntity, setSpec } = useDataSpec();
+  // Use the context hook directly - it provides all state and methods
   const {
-    uploadFile,
-    preview,
+    fileUpload,
+    preview: previewResult,
+    isPreviewLoading,
+    importProgress,
+    importResult,
+    error,
+    selectEntity,
+    selectSpec,
+    setFile,
+    generatePreview,
     executeImport,
-    uploadState,
-    previewState,
-    importState,
-    clearState,
-  } = useImport();
+    resetImport,
+  } = useDataSpecContext();
 
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [selectedEntity, setSelectedEntity] = useState<string | null>(null);
@@ -47,10 +51,10 @@ function ImportWizard() {
   const handleEntitySelect = useCallback(
     (entity: { id: string; name: string }) => {
       setSelectedEntity(entity.id);
-      setEntity(entity);
+      selectEntity(entity as any);
       goToStep(2);
     },
-    [setEntity]
+    [selectEntity]
   );
 
   // Handle file upload
@@ -58,40 +62,37 @@ function ImportWizard() {
     async (file: File) => {
       if (!selectedSpec) return;
 
-      await uploadFile(file);
+      setFile(file);
 
       // Read file content for preview
       const reader = new FileReader();
-      reader.onload = async (e) => {
-        const content = e.target?.result as string;
-        await preview(selectedSpec, content, file.name);
+      reader.onload = async () => {
+        await generatePreview();
         goToStep(4);
       };
       reader.readAsText(file);
     },
-    [selectedSpec, uploadFile, preview]
+    [selectedSpec, setFile, generatePreview]
   );
 
   // Handle import execution
   const handleExecuteImport = useCallback(async () => {
-    if (!selectedSpec || !uploadState.file) return;
+    if (!selectedSpec || !fileUpload.file) return;
 
-    const reader = new FileReader();
-    reader.onload = async (e) => {
-      const content = e.target?.result as string;
-      await executeImport(selectedSpec, content, uploadState.file!.name);
-      goToStep(5);
-    };
-    reader.readAsText(uploadState.file);
-  }, [selectedSpec, uploadState.file, executeImport]);
+    await executeImport();
+    goToStep(5);
+  }, [selectedSpec, fileUpload.file, executeImport]);
 
   // Reset wizard
   const handleReset = () => {
-    clearState();
+    resetImport();
     setSelectedEntity(null);
     setSelectedSpec(null);
     setCurrentStep(1);
   };
+
+  // Check if import is in progress
+  const isImporting = importProgress.status === 'in_progress';
 
   return (
     <div className="max-w-4xl mx-auto p-6">
@@ -155,8 +156,9 @@ function ImportWizard() {
             <div className="space-y-3">
               <button
                 onClick={() => {
-                  setSelectedSpec(`${selectedEntity}-import-v1`);
-                  setSpec({ id: `${selectedEntity}-import-v1`, name: `${selectedEntity} Import` });
+                  const specId = `${selectedEntity}-import-v1`;
+                  setSelectedSpec(specId);
+                  selectSpec({ id: specId, name: `${selectedEntity} Import` } as any);
                   goToStep(3);
                 }}
                 className="w-full p-4 border rounded-lg text-left hover:bg-gray-50 transition"
@@ -171,7 +173,7 @@ function ImportWizard() {
               onClick={() => goToStep(1)}
               className="mt-4 text-blue-600 hover:underline"
             >
-              ← Back to entity selection
+              &larr; Back to entity selection
             </button>
           </div>
         )}
@@ -188,7 +190,7 @@ function ImportWizard() {
               maxSize={10 * 1024 * 1024}
               onUpload={handleFileUpload}
             />
-            {uploadState.isUploading && (
+            {isImporting && (
               <div className="mt-4 text-center text-gray-600">
                 Processing file...
               </div>
@@ -197,7 +199,7 @@ function ImportWizard() {
               onClick={() => goToStep(2)}
               className="mt-4 text-blue-600 hover:underline"
             >
-              ← Back to spec selection
+              &larr; Back to spec selection
             </button>
           </div>
         )}
@@ -206,26 +208,26 @@ function ImportWizard() {
         {currentStep === 4 && (
           <div>
             <h2 className="text-xl font-semibold mb-4">Preview Import</h2>
-            {previewState.isLoading ? (
+            {isPreviewLoading ? (
               <div className="text-center py-8">Loading preview...</div>
-            ) : previewState.error ? (
-              <div className="text-red-600 py-8">{previewState.error}</div>
-            ) : previewState.data ? (
+            ) : error ? (
+              <div className="text-red-600 py-8">{error}</div>
+            ) : previewResult ? (
               <>
                 <div className="mb-4 flex gap-4">
                   <div className="px-4 py-2 bg-green-100 text-green-800 rounded">
-                    Valid: {previewState.data.validRows}
+                    Valid: {previewResult.validRows}
                   </div>
                   <div className="px-4 py-2 bg-red-100 text-red-800 rounded">
-                    Invalid: {previewState.data.invalidRows}
+                    Invalid: {previewResult.invalidRows}
                   </div>
                   <div className="px-4 py-2 bg-gray-100 text-gray-800 rounded">
-                    Total: {previewState.data.totalRows}
+                    Total: {previewResult.totalRows}
                   </div>
                 </div>
                 <PreviewTable
-                  data={previewState.data.rows}
-                  columns={previewState.data.columns}
+                  data={previewResult.rows}
+                  columns={previewResult.columns}
                   showMasking={true}
                 />
                 <div className="mt-6 flex gap-4">
@@ -233,14 +235,14 @@ function ImportWizard() {
                     onClick={() => goToStep(3)}
                     className="px-4 py-2 border rounded hover:bg-gray-50"
                   >
-                    ← Upload different file
+                    &larr; Upload different file
                   </button>
                   <button
                     onClick={handleExecuteImport}
-                    disabled={previewState.data.validRows === 0}
+                    disabled={previewResult.validRows === 0}
                     className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
                   >
-                    Execute Import ({previewState.data.validRows} rows)
+                    Execute Import ({previewResult.validRows} rows)
                   </button>
                 </div>
               </>
@@ -252,23 +254,23 @@ function ImportWizard() {
         {currentStep === 5 && (
           <div>
             <h2 className="text-xl font-semibold mb-4">Import Complete</h2>
-            {importState.isLoading ? (
+            {isImporting ? (
               <ImportProgress
                 status="importing"
                 progress={50}
               />
-            ) : importState.error ? (
-              <div className="text-red-600 py-8">{importState.error}</div>
-            ) : importState.result ? (
+            ) : error ? (
+              <div className="text-red-600 py-8">{error}</div>
+            ) : importResult ? (
               <div className="text-center py-8">
-                <div className="text-6xl mb-4">✓</div>
+                <div className="text-6xl mb-4">&#10003;</div>
                 <div className="text-xl font-medium text-green-600">
                   Import Successful!
                 </div>
                 <div className="mt-4 text-gray-600">
-                  <div>Inserted: {importState.result.inserted} rows</div>
-                  <div>Updated: {importState.result.updated} rows</div>
-                  <div>Skipped: {importState.result.skipped} rows</div>
+                  <div>Inserted: {importResult.successfulRows || 0} rows</div>
+                  <div>Failed: {importResult.failedRows || 0} rows</div>
+                  <div>Total: {importResult.totalRows || 0} rows</div>
                 </div>
                 <button
                   onClick={handleReset}

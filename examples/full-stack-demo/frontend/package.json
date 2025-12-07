@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@dataspec-engine/react": "*",
+    "@dataspec-engine/react": "file:../../../packages/react",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },

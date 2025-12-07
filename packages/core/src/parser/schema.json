@@ -1,0 +1,376 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://dataspec-engine.com/schemas/v1/spec.json",
+  "title": "DataSpec Specification",
+  "description": "Schema for DataSpec YAML specification files",
+  "type": "object",
+  "required": ["version", "metadata", "database", "columns"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+(\\.\\d+)?$",
+      "description": "Specification version (e.g., 1.0, 1.2.3)"
+    },
+    "metadata": {
+      "type": "object",
+      "required": ["name", "entity"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Unique name for this specification"
+        },
+        "description": {
+          "type": "string",
+          "description": "Human-readable description"
+        },
+        "entity": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Entity type (e.g., transactions, students)"
+        },
+        "author": {
+          "type": "string",
+          "description": "Specification author"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date",
+          "description": "Creation date"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Tags for categorization"
+        },
+        "version": {
+          "type": "string",
+          "description": "Spec version"
+        }
+      }
+    },
+    "database": {
+      "type": "object",
+      "required": ["table", "primary_key"],
+      "properties": {
+        "table": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Target database table name"
+        },
+        "primary_key": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Primary key column name"
+        },
+        "schema": {
+          "type": "string",
+          "description": "Database schema name"
+        }
+      }
+    },
+    "columns": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["name", "source", "type", "required", "sensitivity"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Target column name in database"
+          },
+          "source": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Source column name from CSV/Excel"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["string", "number", "integer", "decimal", "boolean", "date", "datetime", "time", "uuid", "json", "array", "text"]
+          },
+          "required": {
+            "type": "boolean",
+            "description": "Whether this field is required"
+          },
+          "sensitivity": {
+            "type": "string",
+            "enum": ["public", "internal", "confidential", "secret", "highly_restricted"],
+            "description": "Data sensitivity level"
+          },
+          "validation": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["type"],
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": ["required", "uuid", "email", "url", "regex", "range", "length", "enum", "custom"]
+                },
+                "message": {
+                  "type": "string"
+                },
+                "pattern": {
+                  "type": "string"
+                },
+                "flags": {
+                  "type": "string"
+                },
+                "min": {
+                  "type": "number"
+                },
+                "max": {
+                  "type": "number"
+                },
+                "values": {
+                  "type": "array"
+                },
+                "script": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "transform": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["type"],
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": ["trim", "uppercase", "lowercase", "capitalize", "parse_date", "format_date", "round", "floor", "ceil", "regex_extract", "regex_replace", "split", "join", "custom"]
+                },
+                "format": {
+                  "type": "string"
+                },
+                "timezone": {
+                  "type": "string"
+                },
+                "decimals": {
+                  "type": "integer"
+                },
+                "pattern": {
+                  "type": "string"
+                },
+                "captureGroup": {
+                  "type": "integer"
+                },
+                "targetField": {
+                  "type": "string"
+                },
+                "flags": {
+                  "type": "string"
+                },
+                "replacement": {
+                  "type": "string"
+                },
+                "delimiter": {
+                  "type": "string"
+                },
+                "index": {
+                  "type": "integer"
+                },
+                "script": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "masking": {
+            "type": "object",
+            "required": ["mode"],
+            "properties": {
+              "mode": {
+                "type": "string",
+                "enum": ["full", "partial", "regex", "custom"]
+              },
+              "replacement": {
+                "type": "string"
+              },
+              "partialStart": {
+                "type": "integer"
+              },
+              "partialEnd": {
+                "type": "integer"
+              },
+              "regexPattern": {
+                "type": "string"
+              },
+              "customScript": {
+                "type": "string"
+              }
+            }
+          },
+          "unmask_permissions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Roles/permissions required to unmask this field"
+          },
+          "lookup": {
+            "type": "object",
+            "required": ["table", "key", "fallback"],
+            "properties": {
+              "table": {
+                "type": "string",
+                "minLength": 1
+              },
+              "key": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                ]
+              },
+              "sourceField": {
+                "type": "string"
+              },
+              "fallback": {
+                "type": "string",
+                "enum": ["error", "skip", "default", "null"]
+              },
+              "defaultValue": {},
+              "cache": {
+                "type": "boolean"
+              }
+            }
+          },
+          "default": {
+            "description": "Default value if source is empty"
+          }
+        }
+      }
+    },
+    "hooks": {
+      "type": "object",
+      "properties": {
+        "before_validate_row": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/hook"
+          }
+        },
+        "validate_field": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/hook"
+          }
+        },
+        "before_lookup": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/hook"
+          }
+        },
+        "perform_lookup": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/hook"
+          }
+        },
+        "transform_field": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/hook"
+          }
+        },
+        "mask_field": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/hook"
+          }
+        },
+        "unmask_field": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/hook"
+          }
+        },
+        "before_insert": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/hook"
+          }
+        },
+        "after_insert": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/hook"
+          }
+        }
+      }
+    },
+    "import_options": {
+      "type": "object",
+      "properties": {
+        "duplicate_strategy": {
+          "type": "string",
+          "enum": ["skip", "update", "error"],
+          "default": "skip"
+        },
+        "batch_size": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 100
+        },
+        "validate_foreign_keys": {
+          "type": "boolean",
+          "default": true
+        },
+        "auto_generate_ids": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "export_options": {
+      "type": "object",
+      "properties": {
+        "apply_masking": {
+          "type": "boolean",
+          "default": true
+        },
+        "include_audit_fields": {
+          "type": "boolean",
+          "default": false
+        },
+        "format": {
+          "type": "string",
+          "enum": ["csv", "excel", "json"],
+          "default": "csv"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "hook": {
+      "type": "object",
+      "required": ["name", "script"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "field": {
+          "type": "string"
+        },
+        "script": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  }
+}

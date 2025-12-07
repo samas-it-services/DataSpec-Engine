@@ -1,0 +1,144 @@
+================================================================================
+                    DATASPEC ENGINE - E2E TEST CONFIGURATION
+================================================================================
+Framework: Playwright 1.40.0
+Location: /e2e/
+Status: CONFIGURED AND READY
+
+================================================================================
+                          E2E TEST SUITES
+================================================================================
+
+File: tests/api.spec.ts
+Description: API Endpoint E2E Tests
+Tests: 12 test cases
+Coverage:
+  - Health Check (1 test)
+  - Entities API (2 tests)
+  - Specs API (2 tests)
+  - YAML Validation (2 tests)
+  - Import Preview (3 tests)
+  - Import Execute (1 test)
+  - Export (2 tests)
+  - Masking (2 tests)
+
+--------------------------------------------------------------------------------
+
+File: tests/import-flow.spec.ts
+Description: Import UI Flow Tests
+Tests: 8 test cases
+Coverage:
+  - Wizard display and step indicators
+  - Navigation through import steps
+  - Entity selection
+  - Spec selection
+  - File upload with CSV data
+  - Preview display with validation
+  - Import completion verification
+  - Error handling for invalid files
+
+--------------------------------------------------------------------------------
+
+File: tests/export-flow.spec.ts
+Description: Export Functionality Tests
+Tests: 9 test cases
+Coverage:
+  - JSON export with/without masking
+  - CSV export with header validation
+  - CSV export with masking
+  - Error handling for invalid entities
+  - Export UI flow verification
+  - Format selection testing
+  - Masking toggle visibility
+
+--------------------------------------------------------------------------------
+
+File: tests/masking.spec.ts
+Description: Security & Masking Tests
+Tests: 24+ test cases
+Coverage:
+  - Full masking (strings, emails, phones)
+  - Partial masking (emails, phones, credit cards)
+  - Edge cases (unicode, special characters, long strings)
+  - Masking consistency (deterministic results)
+  - Unmask operations (auth required)
+  - Role-based access control
+  - Sensitivity level enforcement
+
+================================================================================
+                         BROWSER CONFIGURATION
+================================================================================
+
+Browsers configured in playwright.config.ts:
+
+  1. Chromium (Desktop Chrome)
+     - Device: Desktop Chrome
+     - Status: Ready
+
+  2. Firefox (Desktop Firefox)
+     - Device: Desktop Firefox
+     - Status: Ready
+
+  3. WebKit (Desktop Safari)
+     - Device: Desktop Safari
+     - Status: Ready
+
+  4. Mobile Chrome
+     - Device: Pixel 5
+     - Status: Ready
+
+  5. API-only
+     - No browser required
+     - Status: Ready
+
+================================================================================
+                          TEST CONFIGURATION
+================================================================================
+
+Test Directory: ./tests
+Parallel Execution: Enabled (fullyParallel: true)
+Retries: 2 (CI only)
+Workers: 1 (CI) / auto (local)
+Timeout: 30 seconds per test
+Assertion Timeout: 5 seconds
+
+Reporters:
+  - HTML (playwright-report/)
+  - List (console)
+
+Artifacts:
+  - Screenshots: On failure only
+  - Traces: On first retry
+  - Output Directory: test-results/
+
+Web Servers (auto-started):
+  - API: http://localhost:3000/health
+  - Frontend: http://localhost:3001
+
+================================================================================
+                           HOW TO RUN E2E TESTS
+================================================================================
+
+# Install dependencies
+cd e2e
+npm install
+npx playwright install
+
+# Run all tests
+npm test
+
+# Run specific test file
+npm test -- tests/api.spec.ts
+
+# Run with visible browser
+npm run test:headed
+
+# Run API tests only
+npm run test:api
+
+# View HTML report after run
+npm run report
+
+================================================================================
+                           TOTAL E2E TESTS: 53+
+================================================================================

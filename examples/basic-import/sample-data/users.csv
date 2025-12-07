@@ -1,0 +1,5 @@
+first_name,last_name,email,date_of_birth,role,department
+  John  ,  Doe  ,JOHN.DOE@EXAMPLE.COM,1990-05-15,admin,Engineering
+Jane,Smith,jane.smith@example.com,1985-12-20,user,Marketing
+Bob,Johnson,bob.j@company.org,invalid-date,user,Sales
+Alice,Williams,alice.w@company.org,2000-01-01,manager,HR

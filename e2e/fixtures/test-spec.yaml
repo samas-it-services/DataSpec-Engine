@@ -1,0 +1,97 @@
+version: "1.0"
+metadata:
+  entity: users
+  name: users-import-v1
+  description: Import users from CSV file
+  author: DataSpec Engine
+  created: "2024-01-01"
+
+source:
+  type: csv
+  encoding: utf-8
+  delimiter: ","
+  hasHeader: true
+  skipRows: 0
+
+target:
+  table: users
+  schema: public
+
+columns:
+  - name: first_name
+    sourceColumn: first_name
+    type: string
+    required: true
+    sensitivity: Public
+    validation:
+      - type: minLength
+        value: 1
+      - type: maxLength
+        value: 100
+
+  - name: last_name
+    sourceColumn: last_name
+    type: string
+    required: true
+    sensitivity: Public
+    validation:
+      - type: minLength
+        value: 1
+      - type: maxLength
+        value: 100
+
+  - name: email
+    sourceColumn: email
+    type: string
+    required: true
+    sensitivity: Confidential
+    validation:
+      - type: email
+    masking:
+      mode: partial
+      style: email
+
+  - name: phone
+    sourceColumn: phone
+    type: string
+    required: false
+    sensitivity: Internal
+    validation:
+      - type: pattern
+        value: "^[0-9]{3}-[0-9]{3}-[0-9]{4}$"
+    masking:
+      mode: partial
+      style: phone
+
+  - name: department
+    sourceColumn: department
+    type: string
+    required: false
+    sensitivity: Public
+    validation:
+      - type: enum
+        values:
+          - Engineering
+          - Marketing
+          - Sales
+          - HR
+          - Finance
+
+hooks:
+  beforeValidateRow: |
+    // Custom validation logic can go here
+    return row;
+
+  transformField: |
+    // Transform field value
+    if (field === 'email') {
+      return value.toLowerCase();
+    }
+    return value;
+
+settings:
+  batchSize: 100
+  continueOnError: true
+  maxErrors: 50
+  duplicateHandling: skip
+  auditLog: true

@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  # DataSpec API Server
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - JWT_SECRET=${JWT_SECRET:-your-super-secret-jwt-key-at-least-32-chars}
+      - SUPABASE_URL=${SUPABASE_URL:-}
+      - SUPABASE_SERVICE_KEY=${SUPABASE_SERVICE_KEY:-}
+      - CORS_ORIGINS=http://localhost:3001
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  # React Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3001:80"
+    environment:
+      - VITE_API_URL=http://localhost:3000
+    depends_on:
+      - api
+    restart: unless-stopped
+
+networks:
+  default:
+    name: dataspec-demo

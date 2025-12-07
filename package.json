@@ -1,0 +1,47 @@
+{
+  "name": "dataspec-engine",
+  "version": "1.0.0",
+  "private": true,
+  "packageManager": "npm@10.2.0",
+  "description": "YAML-first, API-first, sensitivity-aware import/export framework for Supabase-backed apps",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "lint": "turbo run lint",
+    "dev": "turbo run dev",
+    "clean": "turbo run clean"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/samas-it-services/DataSpec-Engine.git"
+  },
+  "keywords": [
+    "dataspec",
+    "import",
+    "export",
+    "yaml",
+    "supabase",
+    "sensitivity",
+    "masking",
+    "validation",
+    "transformation"
+  ],
+  "author": "SAMAS IT Services",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/samas-it-services/DataSpec-Engine/issues"
+  },
+  "homepage": "https://github.com/samas-it-services/DataSpec-Engine#readme",
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.10.1",
+    "jest": "^30.2.0",
+    "ts-jest": "^29.4.6",
+    "ts-node": "^10.9.2",
+    "turbo": "^2.6.3",
+    "typescript": "^5.9.3"
+  }
+}

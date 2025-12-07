@@ -1,0 +1,96 @@
+================================================================================
+                    DATASPEC ENGINE - UNIT TEST RESULTS
+================================================================================
+Executed: December 6, 2025
+Platform: macOS Darwin 24.6.0
+Node.js: LTS
+Test Runner: Jest 29.7 via Turborepo 2.6.3
+
+================================================================================
+                           CORE PACKAGE TESTS
+================================================================================
+
+> @dataspec-engine/core@0.1.0 test
+> jest
+
+ PASS src/__tests__/MaskingEngine.test.ts (23.223 s)
+ PASS src/__tests__/LookupResolver.test.ts (24.368 s)
+ PASS src/__tests__/HookExecutor.test.ts (24.194 s)
+ PASS src/__tests__/ExportExecutor.test.ts (25.349 s)
+ PASS src/__tests__/ImportExecutor.test.ts (25.945 s)
+ PASS src/__tests__/FieldTransformer.test.ts (26.799 s)
+ PASS src/__tests__/YAMLParser.test.ts (28.314 s)
+
+Test Suites: 7 passed, 7 total
+Tests:       200 passed, 200 total
+Snapshots:   0 total
+Time:        30.858 s
+
+================================================================================
+                      SUPABASE ADAPTER PACKAGE TESTS
+================================================================================
+
+> @dataspec-engine/supabase-adapter@0.1.0 test
+> jest
+
+ PASS src/__tests__/RLSValidator.test.ts (18.598 s)
+ PASS src/__tests__/SupabaseAdapter.test.ts (29.15 s)
+ PASS src/__tests__/AuditLogger.test.ts (28.994 s)
+
+Test Suites: 3 passed, 3 total
+Tests:       120 passed, 120 total
+Snapshots:   0 total
+Time:        31.408 s
+
+================================================================================
+                          REACT PACKAGE TESTS
+================================================================================
+
+> @dataspec-engine/react@0.1.0 test
+> jest
+
+ PASS src/__tests__/EntitySelector.test.tsx (5.697 s)
+ PASS src/__tests__/hooks.test.tsx
+ PASS src/__tests__/DataSpecContext.test.tsx
+ PASS src/__tests__/FileUpload.test.tsx (5.492 s)
+ PASS src/__tests__/simple.test.tsx
+
+Test Suites: 5 passed, 5 total
+Tests:       4 skipped, 72 passed, 76 total
+Snapshots:   0 total
+Time:        23.913 s
+
+================================================================================
+                           API PACKAGE TESTS
+================================================================================
+
+> @dataspec-engine/api@0.1.0 test
+> jest
+
+No tests found, exiting with code 0
+(API package uses E2E tests for validation)
+
+================================================================================
+                              SUMMARY
+================================================================================
+
+Package                          | Suites | Tests  | Passed | Skipped | Time
+---------------------------------|--------|--------|--------|---------|--------
+@dataspec-engine/core            |      7 |    200 |    200 |       0 | 30.9s
+@dataspec-engine/supabase-adapter|      3 |    120 |    120 |       0 | 31.4s
+@dataspec-engine/react           |      5 |     76 |     72 |       4 | 23.9s
+@dataspec-engine/api             |      0 |      0 |      0 |       0 |  0.0s
+---------------------------------|--------|--------|--------|---------|--------
+TOTAL                            |     15 |    396 |    392 |       4 | ~32s
+
+================================================================================
+                            TEST STATUS: PASS
+================================================================================
+
+Pass Rate: 99.0% (392/396)
+Skipped: 4 (non-critical async timing tests in React)
+
+Turbo Build Status: 8 successful, 8 total
+Cache Status: Optimized with FULL TURBO
+
+================================================================================

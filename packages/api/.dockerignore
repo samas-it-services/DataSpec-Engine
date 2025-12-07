@@ -1,0 +1,45 @@
+# Dependencies
+node_modules
+
+# Build output (handled by multi-stage build)
+dist
+
+# Source maps
+*.map
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Test files
+__tests__
+*.test.ts
+*.spec.ts
+coverage
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Editor files
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Git
+.git
+.gitignore
+
+# Documentation
+*.md
+!README.md
+
+# Docker files (don't need to copy themselves)
+Dockerfile
+docker-compose*.yml
+.dockerignore

@@ -1,0 +1,6 @@
+first_name,last_name,email,phone,department
+John,Doe,invalid-email,555-123-4567,Engineering
+,Smith,jane.smith@example.com,555-234-5678,Marketing
+Bob,,bob.johnson@example.com,not-a-phone,Sales
+Alice,Williams,alice.williams@example.com,555-456-7890,
+Charlie,Brown,charlie.brown,555-567-8901,Engineering

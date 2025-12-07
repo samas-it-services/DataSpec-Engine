@@ -1,0 +1,11 @@
+first_name,last_name,email,phone,department
+John,Doe,john.doe@example.com,555-123-4567,Engineering
+Jane,Smith,jane.smith@example.com,555-234-5678,Marketing
+Bob,Johnson,bob.johnson@example.com,555-345-6789,Sales
+Alice,Williams,alice.williams@example.com,555-456-7890,HR
+Charlie,Brown,charlie.brown@example.com,555-567-8901,Engineering
+Diana,Ross,diana.ross@example.com,555-678-9012,Finance
+Edward,Miller,edward.miller@example.com,555-789-0123,Engineering
+Fiona,Davis,fiona.davis@example.com,555-890-1234,Marketing
+George,Wilson,george.wilson@example.com,555-901-2345,Sales
+Helen,Moore,helen.moore@example.com,555-012-3456,HR

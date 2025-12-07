@@ -286,6 +286,8 @@ See [Architecture Documentation](./architecture.md) for detailed component descr
 
 DataSpec Engine is rigorously tested at multiple levels to ensure reliability and correctness. Our testing approach validates everything from individual functions to complete user workflows.
 
+> **For a deep dive into our testing philosophy, see the comprehensive [Testing Guide](./docs/TESTING.md).**
+
 ### Test Summary
 
 | Test Type | Count | Passing | Coverage |
@@ -302,6 +304,8 @@ Data import/export operations are **high-risk**:
 - A validation bypass could insert invalid data into production
 
 Our comprehensive test suite catches these issues before they reach your users.
+
+**Read more:** [Complete Testing Philosophy & Methodology](./docs/TESTING.md)
 
 ### What Our Tests Validate
 
@@ -346,7 +350,30 @@ We provide convenient shell scripts to run all tests with a single command:
 ```bash
 # Run complete test suite (unit + E2E)
 ./scripts/test-all.sh
+
+# Quick mode - skip E2E for faster feedback
+./scripts/test-all.sh --quick
 ```
+
+#### Generate Test Report
+
+```bash
+# Generate comprehensive markdown report
+./scripts/generate-test-report.sh
+
+# Quick report (skip E2E tests)
+./scripts/generate-test-report.sh --quick
+
+# View the generated report
+cat docs/test-reports/GENERATED-REPORT.md
+```
+
+The report generator produces a detailed markdown document with:
+- Executive summary with pass/fail rates
+- Package-by-package test breakdown
+- Category analysis with visual charts
+- Coverage metrics
+- Failed test details (if any)
 
 #### Run Unit Tests Only
 
@@ -399,7 +426,8 @@ npm run report
 
 | Document | Audience | Description |
 |----------|----------|-------------|
-| [Testing Guide](./docs/TESTING.md) | Developers | How to run all tests, add new tests |
+| [Testing Guide](./docs/TESTING.md) | Developers | Complete testing philosophy, categories, methodology |
+| [Generated Report](./docs/test-reports/GENERATED-REPORT.md) | Technical | Auto-generated test results and metrics |
 | [Test Results](./docs/TEST-RESULTS.md) | Technical | Detailed coverage metrics, test breakdown |
 | [E2E Test Report](./docs/test-reports/E2E-TEST-REPORT.md) | Technical | E2E test details, execution data |
 | [Validation Report](./docs/test-reports/VALIDATION-REPORT.md) | Business | Executive summary, feature checklist |

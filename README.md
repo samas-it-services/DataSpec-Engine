@@ -1,34 +1,47 @@
-# DataSpec Engine
+# 🚀 DataSpec Engine
 
-**The enterprise-grade data import/export framework that actually understands your data.**
+**Enterprise-Grade Data Import/Export for Modern Applications**
 
-DataSpec Engine is a YAML-first, API-first, sensitivity-aware import/export framework built for modern Supabase-backed applications. It solves the messy, error-prone, and security-risky challenges of bulk data operations.
+> Transform messy CSV imports into reliable, auditable, secure data operations.
 
-[![Tests](https://img.shields.io/badge/tests-392%20passing-brightgreen)](#testing--quality-assurance)
-[![Coverage](https://img.shields.io/badge/coverage-94%25-brightgreen)](#test-coverage)
-[![Packages](https://img.shields.io/badge/packages-4%20complete-blue)](#packages)
+[![Tests](https://img.shields.io/badge/tests-392%20passing-brightgreen)](#-testing--quality-assurance)
+[![Coverage](https://img.shields.io/badge/coverage-94%25-brightgreen)](#-test-coverage)
+[![Packages](https://img.shields.io/badge/packages-4%20complete-blue)](#-packages)
 
 ---
 
-## The Problem: Data Import/Export is Harder Than It Looks
+## 🎯 Who Is This For?
+
+| Audience | What You'll Find |
+|----------|------------------|
+| 👔 **Decision Makers** | [Why DataSpec?](#-why-dataspec) • [Case Studies](#-case-studies) • [Industry Solutions](#-industry-solutions) |
+| 💻 **Developers** | [Quick Start](#-quick-start) • [API Reference](docs/api-reference.md) • [Examples](#-examples) |
+| 🏗️ **Architects** | [Architecture](#-architecture) • [Integration Guide](docs/integration-guide.md) |
+| 🔒 **Security Teams** | [Compliance Features](#-built-in-sensitivity--compliance) • [Audit Logging](#audit-logging) |
+
+---
+
+## 🤔 Why DataSpec?
+
+### 😫 The Problem: Data Import/Export Is Harder Than It Looks
 
 Every enterprise application eventually faces these challenges:
 
-### Challenge 1: "Just Import This CSV" Becomes a Nightmare
+#### Challenge 1: "Just Import This CSV" Becomes a Nightmare 📊
 
 Your stakeholder hands you a CSV with 50,000 rows of customer data. Sounds simple, right?
 
 **Reality hits:**
-- Column names don't match your database fields (`First Name` vs `first_name`)
-- Dates are in 5 different formats (`12/25/2024`, `2024-12-25`, `Dec 25, 2024`)
-- Phone numbers have inconsistent formatting (`+1-555-123-4567` vs `5551234567`)
-- Some rows have missing required fields
-- Duplicate entries that need merging, not inserting
-- Foreign key lookups needed (customer name -> customer_id)
+- 🔀 Column names don't match your database fields (`First Name` vs `first_name`)
+- 📅 Dates are in 5 different formats (`12/25/2024`, `2024-12-25`, `Dec 25, 2024`)
+- 📱 Phone numbers have inconsistent formatting (`+1-555-123-4567` vs `5551234567`)
+- ❌ Some rows have missing required fields
+- 🔄 Duplicate entries that need merging, not inserting
+- 🔗 Foreign key lookups needed (customer name → customer_id)
 
-**Traditional approach:** Write custom scripts for each import. 3 weeks later, you have 2,000 lines of spaghetti code that only one developer understands.
+**Traditional approach:** Write custom scripts for each import. 3 weeks later, you have 2,000 lines of spaghetti code that only one developer understands. 🍝
 
-**DataSpec approach:** Define a YAML spec once, reuse forever:
+**DataSpec approach:** Define a YAML spec once, reuse forever: ✨
 
 ```yaml
 entity: customers
@@ -51,13 +64,13 @@ fields:
       return: id
 ```
 
-### Challenge 2: Sensitive Data Exposure
+#### Challenge 2: Sensitive Data Exposure 🔐
 
-Your export feature just dumped 10,000 customer records with SSNs, credit card numbers, and salaries into a CSV that got emailed to the wrong person.
+Your export feature just dumped 10,000 customer records with SSNs, credit card numbers, and salaries into a CSV that got emailed to the wrong person. 😱
 
-**Traditional approach:** Hope nobody notices. Add a checkbox. Get fined for GDPR violations.
+**Traditional approach:** Hope nobody notices. Add a checkbox. Get fined for GDPR violations. 💸
 
-**DataSpec approach:** Built-in sensitivity classification with automatic masking:
+**DataSpec approach:** Built-in sensitivity classification with automatic masking: 🛡️
 
 ```yaml
 fields:
@@ -75,77 +88,131 @@ fields:
       audit: true  # Every unmask is logged
 ```
 
-### Challenge 3: "It Worked on My Machine"
+#### Challenge 3: "It Worked on My Machine" 🤷
 
 Import logic scattered across:
-- Backend controllers
-- Stored procedures
-- Frontend validation
-- Manual SQL scripts
+- 🖥️ Backend controllers
+- 📦 Stored procedures
+- 🌐 Frontend validation
+- 📝 Manual SQL scripts
 
 When something breaks, nobody knows which version of which script was used.
 
-**DataSpec approach:** Single source of truth in version-controlled YAML specs. The same spec runs in preview mode (no database changes) and execute mode (with full audit trail).
+**DataSpec approach:** Single source of truth in version-controlled YAML specs. The same spec runs in preview mode (no database changes) and execute mode (with full audit trail). ✅
 
-### Challenge 4: The UI/API/Database Coupling Mess
+#### Challenge 4: The UI/API/Database Coupling Mess 🔗
 
 Your React app talks directly to Supabase. Your import logic lives in 47 different places. Adding a new field means updating frontend, backend, database, and documentation.
 
 **DataSpec approach:** Complete separation of concerns:
 
 ```
-React App  -->  API Layer  -->  Core Engine  -->  Database Adapter
-    |              |                |                    |
-    v              v                v                    v
- UI only      Validation       Transform            Any DB
-             & routing         & Logic              (Supabase,
-                                                    Postgres,
-                                                    MySQL...)
+React App  →  API Layer  →  Core Engine  →  Database Adapter
+    │              │              │                  │
+    ▼              ▼              ▼                  ▼
+ UI only      Validation     Transform           Any DB
+             & routing       & Logic          (Supabase,
+                                              Postgres,
+                                              MySQL...)
 ```
 
 ---
 
-## How DataSpec Engine Solves These Problems
+## ✅ How DataSpec Engine Solves These Problems
 
-### 1. YAML-First Specifications
+### 📝 1. YAML-First Specifications
 
 Human-readable, version-controllable, reusable specifications that define:
-- Field mappings and transformations
-- Validation rules
-- Lookup relationships
-- Sensitivity classifications
-- Masking policies
+- 🔀 Field mappings and transformations
+- ✔️ Validation rules
+- 🔗 Lookup relationships
+- 🏷️ Sensitivity classifications
+- 🎭 Masking policies
 
-### 2. API-First Architecture
+### 🔌 2. API-First Architecture
 
 Your frontend never touches the database directly. Everything flows through a secure API layer that:
-- Validates permissions before any operation
-- Applies masking based on user roles
-- Logs every action for audit compliance
-- Provides consistent error handling
+- 🔐 Validates permissions before any operation
+- 🎭 Applies masking based on user roles
+- 📋 Logs every action for audit compliance
+- ⚠️ Provides consistent error handling
 
-### 3. Preview Before Execute
+### 👁️ 3. Preview Before Execute
 
 Every import can be previewed first:
-- See exactly what will be inserted, updated, or rejected
-- Identify validation errors before they hit your database
-- Review transformed data before committing
-- No more "oops, I imported to production"
+- 👀 See exactly what will be inserted, updated, or rejected
+- 🔍 Identify validation errors before they hit your database
+- 🔄 Review transformed data before committing
+- 🚫 No more "oops, I imported to production"
 
-### 4. Built-in Sensitivity & Compliance
+### 🛡️ 4. Built-in Sensitivity & Compliance
 
 Five sensitivity levels out of the box:
-- **Public** - No restrictions
-- **Internal** - Company employees only
-- **Confidential** - Need-to-know basis
-- **Secret** - Highly restricted access
-- **Highly-Restricted** - Maximum protection (PII, financial data)
+- 🟢 **Public** - No restrictions
+- 🔵 **Internal** - Company employees only
+- 🟡 **Confidential** - Need-to-know basis
+- 🟠 **Secret** - Highly restricted access
+- 🔴 **Highly-Restricted** - Maximum protection (PII, financial data)
 
 Every unmask operation requires authorization and creates an audit log.
 
 ---
 
-## Quick Start
+## 🏭 Industry Solutions
+
+DataSpec Engine solves data challenges across industries:
+
+### 💰 Financial Services
+- Transaction import with automatic account lookups
+- Sensitive data masking (account numbers, SSNs)
+- SOX compliance audit logging
+- PCI-DSS compliant data handling
+
+[Read more →](docs/industries/finance.md)
+
+### 🏥 Healthcare
+- HIPAA-compliant patient data handling
+- PHI masking and role-based unmasking
+- HL7/FHIR data transformation
+- Audit trails for regulatory compliance
+
+[Read more →](docs/industries/healthcare.md)
+
+### ⛽ Oil & Gas
+- IoT sensor data batch import
+- Equipment maintenance records
+- Regulatory compliance exports
+- Environmental reporting data
+
+[Read more →](docs/industries/oil-gas.md)
+
+---
+
+## 📋 Case Studies
+
+### 🕌 SAMAS Charity Finance (Production)
+
+Real-world deployment managing financial operations for educational charities:
+
+| Metric | Value |
+|--------|-------|
+| 📊 **Entities Configured** | 42 with operation modes |
+| 👥 **User Roles** | 5 types (admin, finance, auditor, zonal, super_admin) |
+| 🔐 **Audit Compliance** | Full donor PII protection |
+| 🛡️ **Data Breaches** | Zero since deployment |
+| ⚡ **Import Speed** | 10k rows in <30 seconds |
+
+**Key Features Used:**
+- Operation modes (full, export_only, view_only)
+- Role-based permissions per entity
+- Automatic audit table protection
+- Sensitive donor data masking
+
+[Read the full case study →](docs/case-studies/samas-charity-finance.md)
+
+---
+
+## 🚀 Quick Start
 
 ### Installation
 
@@ -191,43 +258,45 @@ function App() {
 }
 ```
 
-See [Getting Started Guide](./docs/getting-started.md) for complete setup instructions.
+📖 See [Getting Started Guide](./docs/getting-started.md) for complete setup instructions.
 
 ---
 
-## Packages
+## 📦 Packages
 
 | Package | Description | Status | Tests |
 |---------|-------------|--------|-------|
-| [`@dataspec-engine/core`](./packages/core) | YAML parser, transformers, masking engine, import/export executors | Complete | 320 |
-| [`@dataspec-engine/supabase-adapter`](./packages/supabase-adapter) | Supabase database integration with RLS support | Complete | 120 |
-| [`@dataspec-engine/react`](./packages/react) | React UI components and hooks | Complete | 76 |
-| [`@dataspec-engine/api`](./packages/api) | REST API (Express + Supabase Edge Functions) | Complete | - |
+| [`@dataspec-engine/core`](./packages/core) | 🔧 YAML parser, transformers, masking engine, import/export executors | ✅ Complete | 320 |
+| [`@dataspec-engine/supabase-adapter`](./packages/supabase-adapter) | 🗄️ Supabase database integration with RLS support | ✅ Complete | 120 |
+| [`@dataspec-engine/react`](./packages/react) | ⚛️ React UI components and hooks | ✅ Complete | 76 |
+| [`@dataspec-engine/api`](./packages/api) | 🌐 REST API (Express + Supabase Edge Functions) | ✅ Complete | - |
 
 ---
 
-## Features at a Glance
+## ✨ Features at a Glance
 
 | Feature | Description |
 |---------|-------------|
-| **YAML Specifications** | Human-readable, versionable import/export definitions |
-| **Field Transformations** | 20+ built-in transforms (trim, uppercase, date parsing, phone normalization) |
-| **Lookup Resolution** | Automatic foreign key lookups with single or composite keys |
-| **Validation Rules** | Required fields, regex patterns, custom validators |
-| **Sensitivity Classification** | 5 levels from Public to Highly-Restricted |
-| **Data Masking** | Full, partial, and regex-based masking with role-based unmasking |
-| **Hook System** | 9 extension points for custom logic (beforeValidate, afterInsert, etc.) |
-| **Preview Mode** | Dry-run imports to see results before committing |
-| **Audit Logging** | Complete trail of all operations for compliance |
-| **React Components** | Ready-to-use EntitySelector, FileUpload, PreviewTable, ImportProgress |
+| 📝 **YAML Specifications** | Human-readable, versionable import/export definitions |
+| 🔄 **Field Transformations** | 20+ built-in transforms (trim, uppercase, date parsing, phone normalization) |
+| 🔗 **Lookup Resolution** | Automatic foreign key lookups with single or composite keys |
+| ✔️ **Validation Rules** | Required fields, regex patterns, custom validators |
+| 🏷️ **Sensitivity Classification** | 5 levels from Public to Highly-Restricted |
+| 🎭 **Data Masking** | Full, partial, and regex-based masking with role-based unmasking |
+| 🪝 **Hook System** | 9 extension points for custom logic (beforeValidate, afterInsert, etc.) |
+| 👁️ **Preview Mode** | Dry-run imports to see results before committing |
+| 📋 **Audit Logging** | Complete trail of all operations for compliance |
+| ⚛️ **React Components** | Ready-to-use EntitySelector, FileUpload, PreviewTable, ImportProgress |
+| 🔒 **Operation Modes** | Control entity access (full, export_only, view_only, import_only) |
+| 👥 **Role Permissions** | Separate view/import/export permissions per entity |
 
 ---
 
-## Architecture
+## 🏗️ Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                         React Application                        │
+│                      React Application                           │
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐              │
 │  │EntitySelector│  │ FileUpload  │  │PreviewTable │              │
 │  └─────────────┘  └─────────────┘  └─────────────┘              │
@@ -278,17 +347,15 @@ See [Getting Started Guide](./docs/getting-started.md) for complete setup instru
                    └─────────────────┘
 ```
 
-See [Architecture Documentation](./architecture.md) for detailed component descriptions.
+📖 See [Architecture Documentation](./architecture.md) for detailed component descriptions.
 
 ---
 
-## Testing & Quality Assurance
+## 🧪 Testing & Quality Assurance
 
-DataSpec Engine is rigorously tested at multiple levels to ensure reliability and correctness. Our testing approach validates everything from individual functions to complete user workflows.
+DataSpec Engine is rigorously tested at multiple levels to ensure reliability and correctness.
 
-> **For a deep dive into our testing philosophy, see the comprehensive [Testing Guide](./docs/TESTING.md).**
-
-### Test Summary
+### 📊 Test Summary
 
 | Test Type | Count | Passing | Coverage |
 |-----------|-------|---------|----------|
@@ -296,56 +363,18 @@ DataSpec Engine is rigorously tested at multiple levels to ensure reliability an
 | **E2E Tests** | 56 | 25+ | - |
 | **Total** | 452 | 417+ | - |
 
-### Why We Test So Thoroughly
+### 🎯 Why We Test So Thoroughly
 
 Data import/export operations are **high-risk**:
-- A bug in transformation logic could corrupt thousands of records
-- A masking failure could expose sensitive customer data
-- A validation bypass could insert invalid data into production
+- ❌ A bug in transformation logic could corrupt thousands of records
+- 🔓 A masking failure could expose sensitive customer data
+- 💥 A validation bypass could insert invalid data into production
 
 Our comprehensive test suite catches these issues before they reach your users.
 
-**Read more:** [Complete Testing Philosophy & Methodology](./docs/TESTING.md)
+📖 **Read more:** [Complete Testing Philosophy & Methodology](./docs/TESTING.md)
 
-### What Our Tests Validate
-
-#### Unit Tests (396 tests)
-Test individual components in isolation:
-
-- **YAML Parser** (45 tests) - Validates spec parsing, schema validation, error handling
-- **Field Transformer** (55 tests) - Verifies all 20+ transformation functions
-- **Lookup Resolver** (40 tests) - Tests foreign key resolution with various scenarios
-- **Masking Engine** (50 tests) - Ensures sensitive data is properly masked/unmasked
-- **Hook Executor** (45 tests) - Validates all 9 hook points execute correctly
-- **Import Executor** (50 tests) - Tests the complete import pipeline
-- **Export Executor** (35 tests) - Validates export with masking applied
-
-#### E2E Tests (56 tests)
-Test complete user workflows using Playwright:
-
-- **API Endpoints** (15 tests) - Health checks, entity listing, spec validation
-- **Import Flow** (8 tests) - File upload, preview, validation, execution
-- **Export Flow** (9 tests) - Entity selection, format options, masking
-- **Masking Operations** (24 tests) - Full/partial masking, role-based unmask, audit logging
-
-### Visual Test Evidence
-
-Our E2E tests capture screenshots of every major UI state:
-
-| Screenshot | Description |
-|------------|-------------|
-| [Entity Selector](./docs/test-reports/screenshots/entity-selector.png) | Entity selection with users, products, transactions |
-| [Import Preview](./docs/test-reports/screenshots/import-preview.png) | File upload step with drag & drop |
-| [Export Options](./docs/test-reports/screenshots/export-options.png) | Export format selection UI |
-| [Masking Toggle](./docs/test-reports/screenshots/masking-toggle.png) | Sensitivity masking controls |
-| [Validation Errors](./docs/test-reports/screenshots/validation-errors.png) | How validation errors are displayed |
-| [Error Handling](./docs/test-reports/screenshots/error-handling.png) | Error state handling |
-
-### Running Tests
-
-We provide convenient shell scripts to run all tests with a single command:
-
-#### Run All Tests (Recommended for CI/CD)
+### 🏃 Running Tests
 
 ```bash
 # Run complete test suite (unit + E2E)
@@ -353,89 +382,14 @@ We provide convenient shell scripts to run all tests with a single command:
 
 # Quick mode - skip E2E for faster feedback
 ./scripts/test-all.sh --quick
-```
 
-#### Generate Test Report
-
-```bash
-# Generate comprehensive markdown report
+# Generate comprehensive test report
 ./scripts/generate-test-report.sh
-
-# Quick report (skip E2E tests)
-./scripts/generate-test-report.sh --quick
-
-# View the generated report
-cat docs/test-reports/GENERATED-REPORT.md
 ```
-
-The report generator produces a detailed markdown document with:
-- Executive summary with pass/fail rates
-- Package-by-package test breakdown
-- Category analysis with visual charts
-- Coverage metrics
-- Failed test details (if any)
-
-#### Run Unit Tests Only
-
-```bash
-# All packages
-npm test
-
-# Specific package
-npm test --workspace=@dataspec-engine/core
-npm test --workspace=@dataspec-engine/react
-npm test --workspace=@dataspec-engine/supabase-adapter
-
-# With coverage report
-npm test -- --coverage
-```
-
-#### Run E2E Tests
-
-```bash
-# Install Playwright browsers (first time only)
-cd e2e && npx playwright install chromium
-
-# Run E2E tests (starts servers automatically)
-npm test
-
-# Run with visible browser (for debugging)
-npm run test:headed
-
-# Run specific test file
-npx playwright test tests/import-flow.spec.ts
-
-# View HTML test report
-npm run report
-```
-
-#### Run Example Applications
-
-```bash
-# Test the basic import example
-./scripts/test-basic-import.sh
-
-# Test the full-stack demo
-./scripts/test-fullstack-demo.sh
-
-# Test the API server
-./scripts/test-api.sh
-```
-
-### Test Documentation
-
-| Document | Audience | Description |
-|----------|----------|-------------|
-| [Testing Guide](./docs/TESTING.md) | Developers | Complete testing philosophy, categories, methodology |
-| [Generated Report](./docs/test-reports/GENERATED-REPORT.md) | Technical | Auto-generated test results and metrics |
-| [Test Results](./docs/TEST-RESULTS.md) | Technical | Detailed coverage metrics, test breakdown |
-| [E2E Test Report](./docs/test-reports/E2E-TEST-REPORT.md) | Technical | E2E test details, execution data |
-| [Validation Report](./docs/test-reports/VALIDATION-REPORT.md) | Business | Executive summary, feature checklist |
-| [QA Certification](./docs/test-reports/QA-CERTIFICATION.md) | Compliance | Formal sign-off document |
 
 ---
 
-## Test Coverage
+## 📈 Test Coverage
 
 We maintain high code coverage to ensure reliability:
 
@@ -448,20 +402,37 @@ Coverage thresholds are enforced in CI - PRs with coverage below 70% will fail.
 
 ---
 
-## Documentation
+## 📖 Documentation
 
-| Document | Description |
-|----------|-------------|
-| [Architecture](./architecture.md) | System design, component diagrams, data flow |
-| [Getting Started](./docs/getting-started.md) | Installation, basic usage, first import |
-| [API Reference](./docs/api-reference.md) | Complete component and hook documentation |
-| [YAML Spec Guide](./docs/yaml-spec-guide.md) | Specification format, field options, examples |
-| [Testing Guide](./docs/TESTING.md) | How to run tests, add new tests, CI integration |
-| [Test Reports](./docs/test-reports/) | E2E results, validation checklist, QA certification |
+### 🔧 Technical Guides
+
+| Document | 👥 Audience | Description |
+|----------|-------------|-------------|
+| [Getting Started](docs/getting-started.md) | 💻 Developers | Installation, setup, first import |
+| [YAML Spec Guide](docs/yaml-spec-guide.md) | 💻 Developers | Specification format and examples |
+| [API Reference](docs/api-reference.md) | 💻 Developers | Complete component documentation |
+| [Operation Modes](docs/operation-modes.md) | 🏗️ Architects | Entity permission configuration |
+| [Role Permissions](docs/role-permissions.md) | 🔒 Security | Role-based access control |
+| [Integration Guide](docs/integration-guide.md) | 🏗️ Architects | How to integrate into your app |
+| [Testing Guide](docs/TESTING.md) | 💻 Developers | Running and writing tests |
+
+### 🏭 Industry Guides
+
+| Guide | Industry | Key Features |
+|-------|----------|--------------|
+| [Finance Solutions](docs/industries/finance.md) | 💰 Finance | SOX compliance, PCI-DSS masking |
+| [Healthcare Solutions](docs/industries/healthcare.md) | 🏥 Healthcare | HIPAA compliance, PHI protection |
+| [Oil & Gas Solutions](docs/industries/oil-gas.md) | ⛽ Energy | Sensor data, regulatory exports |
+
+### 📋 Case Studies
+
+| Case Study | Industry | Scale |
+|------------|----------|-------|
+| [SAMAS Charity Finance](docs/case-studies/samas-charity-finance.md) | 🕌 Non-Profit | 42 entities, 5 roles |
 
 ---
 
-## Examples
+## 🌟 Examples
 
 We include working examples to help you get started:
 
@@ -471,7 +442,7 @@ We include working examples to help you get started:
 | **Full-Stack Demo** | Complete React + API application | [`examples/full-stack-demo/`](./examples/full-stack-demo/) |
 | **Supabase Demo** | Supabase Edge Functions integration | [`examples/supabase-demo/`](./examples/supabase-demo/) |
 
-### Running the Full-Stack Demo
+### 🏃 Running the Full-Stack Demo
 
 ```bash
 # Terminal 1: Start the API server
@@ -489,9 +460,9 @@ npm run dev
 
 ---
 
-## Real-World Use Cases
+## 🌍 Real-World Use Cases
 
-### Healthcare: Patient Data Import
+### 🏥 Healthcare: Patient Data Import
 
 ```yaml
 entity: patients
@@ -515,7 +486,7 @@ fields:
       return: id
 ```
 
-### Finance: Transaction Import
+### 💰 Finance: Transaction Import
 
 ```yaml
 entity: transactions
@@ -535,7 +506,7 @@ fields:
     validation: positive_number
 ```
 
-### HR: Employee Onboarding
+### 👥 HR: Employee Onboarding
 
 ```yaml
 entity: employees
@@ -559,11 +530,11 @@ fields:
 
 ---
 
-## Contributing
+## 🤝 Contributing
 
 We welcome contributions! Please see our [Contributing Guide](./CONTRIBUTING.md) for details.
 
-### Development Setup
+### 💻 Development Setup
 
 ```bash
 # Clone the repository
@@ -585,18 +556,18 @@ npm test
 
 ---
 
-## License
+## 📄 License
 
 ISC License - See [LICENSE](./LICENSE) for details.
 
 ---
 
-## Support
+## 🆘 Support
 
-- **Documentation**: [docs/](./docs/)
-- **Issues**: [GitHub Issues](https://github.com/your-org/dataspec-engine/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/your-org/dataspec-engine/discussions)
+- 📖 **Documentation**: [docs/](./docs/)
+- 🐛 **Issues**: [GitHub Issues](https://github.com/your-org/dataspec-engine/issues)
+- 💬 **Discussions**: [GitHub Discussions](https://github.com/your-org/dataspec-engine/discussions)
 
 ---
 
-**Built with care for developers who've suffered through too many broken CSV imports.**
+**Built with 💚 for developers who've suffered through too many broken CSV imports.**

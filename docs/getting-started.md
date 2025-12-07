@@ -1,8 +1,19 @@
-# Getting Started with DataSpec Engine
+# 🚀 Getting Started with DataSpec Engine
 
-This guide will help you set up and use DataSpec Engine in your Supabase-backed React application.
+> Get up and running with DataSpec Engine in minutes.
 
-## Prerequisites
+---
+
+## 👥 Target Audience
+
+| Audience | What You'll Learn |
+|----------|-------------------|
+| 💻 **Developers** | Installation, basic setup, first import |
+| 🏗️ **Architects** | Integration patterns, database setup |
+
+---
+
+## 📋 Prerequisites
 
 - Node.js 18+
 - npm or yarn
@@ -315,16 +326,24 @@ Roles that can unmask by default:
 - `super_admin`
 - `data_manager`
 
-## Next Steps
+## 📚 Next Steps
 
 - [API Reference](./api-reference.md) - Full component and hook documentation
 - [YAML Spec Guide](./yaml-spec-guide.md) - Complete specification format
 - [Architecture](../architecture.md) - System design overview
-- [Test Results](./TEST-RESULTS.md) - Test coverage details
+- [Integration Guide](./integration-guide.md) - Step-by-step integration instructions
+- [Operation Modes](./operation-modes.md) - Configure entity restrictions
+- [Role Permissions](./role-permissions.md) - Set up role-based access
 
-## Troubleshooting
+### 🏭 Industry-Specific Guides
 
-### Memory Issues with Tests
+- [💰 Financial Services](./industries/finance.md) - SOX, PCI-DSS compliance
+- [🏥 Healthcare](./industries/healthcare.md) - HIPAA compliance
+- [⛽ Oil & Gas](./industries/oil-gas.md) - High-volume sensor data
+
+## 🔧 Troubleshooting
+
+### ⚠️ Memory Issues with Tests
 
 If you encounter heap memory errors:
 
@@ -332,7 +351,7 @@ If you encounter heap memory errors:
 NODE_OPTIONS="--max-old-space-size=4096" npm test
 ```
 
-### CORS Issues
+### ⚠️ CORS Issues
 
 Ensure your API allows requests from your frontend origin:
 
@@ -344,7 +363,7 @@ app.use(cors({
 }));
 ```
 
-### Missing Entity/Spec
+### ⚠️ Missing Entity/Spec
 
 Verify your API endpoints return the expected format:
 

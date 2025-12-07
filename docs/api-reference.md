@@ -1,10 +1,19 @@
-# DataSpec Engine - API Reference
+# 📖 DataSpec Engine - API Reference
 
-Complete API documentation for all DataSpec Engine packages.
+> Complete API documentation for all DataSpec Engine packages.
 
 ---
 
-## Table of Contents
+## 👥 Target Audience
+
+| Audience | What You'll Find |
+|----------|------------------|
+| 💻 **Developers** | Component props, hook returns, usage examples |
+| 🏗️ **Architects** | Type definitions, interface contracts |
+
+---
+
+## 📋 Table of Contents
 
 - [React Components](#react-components)
 - [React Hooks](#react-hooks)
@@ -496,6 +505,47 @@ class AuditLogger {
 
 ## TypeScript Types
 
+### Operation Mode & Permission Types
+
+```typescript
+// Operation modes control what operations are allowed on an entity
+enum OperationMode {
+  FULL = 'full',           // All operations allowed
+  EXPORT_ONLY = 'export_only', // View + export only (e.g., audit tables)
+  VIEW_ONLY = 'view_only',     // View only (e.g., system tables)
+  IMPORT_ONLY = 'import_only', // View + import only (e.g., staging)
+}
+
+// Entity categories for UI grouping
+enum EntityCategory {
+  CORE = 'core',
+  FINANCIAL = 'financial',
+  AUDIT = 'audit',
+  SYSTEM = 'system',
+  LINK = 'link',
+  GENERAL = 'general',
+}
+
+// Role-based permissions per operation
+interface EntityPermissions {
+  viewRoles: string[];   // Roles that can view the entity
+  importRoles: string[]; // Roles that can import data
+  exportRoles: string[]; // Roles that can export data
+}
+
+// Permission checking functions
+function isOperationAllowedByMode(
+  mode: OperationMode,
+  operation: 'view' | 'import' | 'export'
+): boolean;
+
+function hasEntityPermission(
+  entity: EntityDefinition,
+  operation: 'view' | 'import' | 'export',
+  userRoles: string[]
+): boolean;
+```
+
 ### Core Types
 
 ```typescript
@@ -517,9 +567,16 @@ enum OperationStatus {
 interface EntityDefinition {
   id: string;
   name: string;
+  displayName?: string;
   description?: string;
   table: string;
+  icon?: string;
   specCount?: number;
+  operationMode?: OperationMode;      // Controls allowed operations
+  permissions?: EntityPermissions;     // Role-based permissions
+  category?: EntityCategory | string;  // Grouping category
+  sortOrder?: number;                  // Display order
+  enabled?: boolean;                   // Whether entity is active
 }
 
 interface SpecDefinition {
@@ -581,9 +638,17 @@ interface ExportOptions {
 
 ---
 
-## Related Documentation
+## 📚 Related Documentation
 
-- [Getting Started](./getting-started.md)
-- [YAML Spec Guide](./yaml-spec-guide.md)
-- [Architecture](../architecture.md)
-- [Test Results](./TEST-RESULTS.md)
+- [🚀 Getting Started](./getting-started.md) - Installation and basic usage
+- [📝 YAML Spec Guide](./yaml-spec-guide.md) - Specification format reference
+- [🏗️ Architecture](../architecture.md) - System design overview
+- [🏗️ Integration Guide](./integration-guide.md) - Step-by-step integration
+- [🔒 Operation Modes](./operation-modes.md) - Entity restrictions
+- [🔐 Role Permissions](./role-permissions.md) - Access control
+
+### 🏭 Industry Guides
+
+- [💰 Financial Services](./industries/finance.md)
+- [🏥 Healthcare](./industries/healthcare.md)
+- [⛽ Oil & Gas](./industries/oil-gas.md)

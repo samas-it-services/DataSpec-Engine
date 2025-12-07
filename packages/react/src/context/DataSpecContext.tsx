@@ -18,6 +18,7 @@ import {
   ExportOptions,
   ExportResult,
   OperationStatus,
+  hasEntityPermission,
 } from '../types';
 
 /**
@@ -63,10 +64,30 @@ const createInitialState = (config: DataSpecProviderConfig): DataSpecContextStat
   importResult: null,
   userRoles: [],
   canUnmask: false,
+  canViewSelected: false,
+  canImportSelected: false,
+  canExportSelected: false,
   isLoadingEntities: false,
   isLoadingSpecs: false,
   error: null,
 });
+
+/**
+ * Compute permission flags for selected entity
+ */
+function computePermissions(
+  entity: EntityDefinition | null,
+  userRoles: string[]
+): { canView: boolean; canImport: boolean; canExport: boolean } {
+  if (!entity) {
+    return { canView: false, canImport: false, canExport: false };
+  }
+  return {
+    canView: hasEntityPermission(entity, 'view', userRoles),
+    canImport: hasEntityPermission(entity, 'import', userRoles),
+    canExport: hasEntityPermission(entity, 'export', userRoles),
+  };
+}
 
 /**
  * Action types
@@ -99,7 +120,8 @@ function reducer(state: DataSpecContextState, action: Action): DataSpecContextSt
     case 'SET_SPECS':
       return { ...state, specs: action.payload };
 
-    case 'SELECT_ENTITY':
+    case 'SELECT_ENTITY': {
+      const perms = computePermissions(action.payload, state.userRoles);
       return {
         ...state,
         selectedEntity: action.payload,
@@ -107,7 +129,11 @@ function reducer(state: DataSpecContextState, action: Action): DataSpecContextSt
         specs: [],
         preview: null,
         fileUpload: initialFileUpload,
+        canViewSelected: perms.canView,
+        canImportSelected: perms.canImport,
+        canExportSelected: perms.canExport,
       };
+    }
 
     case 'SELECT_SPEC':
       return {
@@ -154,14 +180,19 @@ function reducer(state: DataSpecContextState, action: Action): DataSpecContextSt
     case 'SET_IMPORT_RESULT':
       return { ...state, importResult: action.payload };
 
-    case 'SET_USER_ROLES':
+    case 'SET_USER_ROLES': {
+      const perms = computePermissions(state.selectedEntity, action.payload);
       return {
         ...state,
         userRoles: action.payload,
         canUnmask: action.payload.some(role =>
           ['admin', 'super_admin', 'data_manager'].includes(role)
         ),
+        canViewSelected: perms.canView,
+        canImportSelected: perms.canImport,
+        canExportSelected: perms.canExport,
       };
+    }
 
     case 'SET_LOADING_ENTITIES':
       return { ...state, isLoadingEntities: action.payload };

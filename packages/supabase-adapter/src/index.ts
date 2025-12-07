@@ -35,5 +35,16 @@ export type {
   UpdateResult,
   DeleteResult,
   Transaction,
-  OperationLog
+  OperationLog,
+  EntityDefinition,
+  EntityPermissions,
+  EntityOperation
+} from '@samas-it-services/dataspec-core';
+
+// Re-export operation mode enum and permission functions
+export {
+  OperationMode,
+  EntityCategory,
+  isOperationAllowedByMode,
+  hasEntityPermission
 } from '@samas-it-services/dataspec-core';

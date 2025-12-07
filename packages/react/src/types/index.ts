@@ -2,7 +2,113 @@
  * React UI Types for DataSpec Engine
  */
 
+// =============================================================================
+// Operation Mode & Permissions (aligned with @samas-it-services/dataspec-core)
+// =============================================================================
+
+/**
+ * Operation modes for entities
+ * Controls which operations are allowed on an entity
+ */
+export enum OperationMode {
+  /** All operations allowed: view, import, export */
+  FULL = 'full',
+  /** View and export only, no import (e.g., audit tables) */
+  EXPORT_ONLY = 'export_only',
+  /** View only, no import or export (e.g., system/reference tables) */
+  VIEW_ONLY = 'view_only',
+  /** View and import only, no export (e.g., staging tables) */
+  IMPORT_ONLY = 'import_only'
+}
+
+/**
+ * Entity categories for grouping
+ */
+export enum EntityCategory {
+  CORE = 'core',
+  FINANCIAL = 'financial',
+  AUDIT = 'audit',
+  SYSTEM = 'system',
+  LINK = 'link',
+  GENERAL = 'general'
+}
+
+/**
+ * Role-based permissions for each operation
+ */
+export interface EntityPermissions {
+  /** Roles allowed to view this entity in the UI */
+  viewRoles: string[];
+  /** Roles allowed to import data to this entity */
+  importRoles: string[];
+  /** Roles allowed to export data from this entity */
+  exportRoles: string[];
+}
+
+/**
+ * Check if an operation is allowed by the operation mode
+ */
+export function isOperationAllowedByMode(
+  mode: OperationMode | undefined,
+  operation: 'view' | 'import' | 'export'
+): boolean {
+  if (!mode) return true; // Default to full access if mode not set
+  switch (mode) {
+    case OperationMode.FULL:
+      return true;
+    case OperationMode.EXPORT_ONLY:
+      return operation === 'view' || operation === 'export';
+    case OperationMode.VIEW_ONLY:
+      return operation === 'view';
+    case OperationMode.IMPORT_ONLY:
+      return operation === 'view' || operation === 'import';
+    default:
+      return true;
+  }
+}
+
+/**
+ * Check if a user has permission for an operation on an entity
+ */
+export function hasEntityPermission(
+  entity: EntityDefinition | null,
+  operation: 'view' | 'import' | 'export',
+  userRoles: string[]
+): boolean {
+  if (!entity) return false;
+
+  // Check operation mode first
+  if (!isOperationAllowedByMode(entity.operationMode, operation)) {
+    return false;
+  }
+
+  // If no permissions defined, default to allowing (backwards compatibility)
+  if (!entity.permissions) return true;
+
+  // Get allowed roles for this operation
+  let allowedRoles: string[];
+  switch (operation) {
+    case 'view':
+      allowedRoles = entity.permissions.viewRoles || [];
+      break;
+    case 'import':
+      allowedRoles = entity.permissions.importRoles || [];
+      break;
+    case 'export':
+      allowedRoles = entity.permissions.exportRoles || [];
+      break;
+    default:
+      return false;
+  }
+
+  // Check if user has any of the allowed roles
+  return userRoles.some(role => allowedRoles.includes(role));
+}
+
+// =============================================================================
 // Re-export enums locally to avoid bundling issues
+// =============================================================================
+
 export enum OperationStatus {
   PENDING = 'pending',
   IN_PROGRESS = 'in_progress',
@@ -105,10 +211,21 @@ export interface DataSpecProviderConfig {
 export interface EntityDefinition {
   id: string;
   name: string;
+  displayName?: string;
   description?: string;
   table: string;
   icon?: string;
   specCount?: number;
+  /** Operation mode controlling allowed operations */
+  operationMode?: OperationMode;
+  /** Role-based permissions */
+  permissions?: EntityPermissions;
+  /** Category for grouping in UI */
+  category?: EntityCategory | string;
+  /** Sort order within category */
+  sortOrder?: number;
+  /** Whether the entity is enabled */
+  enabled?: boolean;
 }
 
 /**
@@ -276,6 +393,14 @@ export interface DataSpecContextState {
   // User permissions
   userRoles: string[];
   canUnmask: boolean;
+
+  // Computed permissions for selected entity
+  /** Whether the user can view the selected entity (always true if entity is visible) */
+  canViewSelected: boolean;
+  /** Whether the user can import to the selected entity */
+  canImportSelected: boolean;
+  /** Whether the user can export from the selected entity */
+  canExportSelected: boolean;
 
   // Loading states
   isLoadingEntities: boolean;

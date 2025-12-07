@@ -7,6 +7,68 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.3.0] - 2025-12-08
+
+### Entity Operation Modes & Role-Based Permissions
+
+This release adds comprehensive entity-level access control with operation modes and role-based permissions.
+
+#### Added - Operation Modes
+- **OperationMode enum** - Controls which operations are allowed on an entity:
+  - `full` - All operations allowed (view, import, export)
+  - `export_only` - View and export only, no import (e.g., audit tables)
+  - `view_only` - View only, no import or export (e.g., system tables)
+  - `import_only` - View and import only, no export (e.g., staging tables)
+
+#### Added - Role-Based Permissions
+- **EntityPermissions interface** - Separate role arrays for each operation:
+  - `viewRoles` - Roles allowed to view the entity in the UI
+  - `importRoles` - Roles allowed to import data
+  - `exportRoles` - Roles allowed to export data
+- **Permission checking functions**:
+  - `isOperationAllowedByMode()` - Check if mode allows an operation
+  - `hasEntityPermission()` - Check both mode and role permissions
+
+#### Added - Entity Categories
+- **EntityCategory enum** - Grouping for UI organization:
+  - `core` - Core business entities (zones, students, parents)
+  - `financial` - Financial records (transactions, invoices)
+  - `audit` - Audit trail tables (export_only)
+  - `system` - System configuration (admin only)
+  - `link` - Junction/link tables (view_only)
+
+#### Added - Database Migration
+- `migrations/002_entity_operation_modes.sql` - Schema changes for DataSpec Engine
+- New columns: `operation_mode`, `view_roles`, `import_roles`, `export_roles`, `category`
+- GIN indexes for efficient role array queries
+- `dataspec_check_permission()` - PostgreSQL function for permission checking
+
+#### Added - Supabase Adapter Updates
+- `getEntities()` - Fetch all enabled entities with permissions
+- `getEntitiesForUser()` - Filter entities by user roles and operation
+- `getEntityByName()` - Fetch single entity by name
+- `canPerformOperation()` - Check user permission for operation
+- `mapEntityRow()` - Convert DB row to EntityDefinition
+
+#### Added - React Context Updates
+- `canViewSelected` - Whether user can view selected entity
+- `canImportSelected` - Whether user can import to selected entity
+- `canExportSelected` - Whether user can export from selected entity
+- `hasEntityPermission()` - Client-side permission checking function
+- `computePermissions()` - Recalculate permissions on entity/role change
+
+#### Added - Unit Tests
+- 42 new tests in `EntityPermissions.test.ts`
+- Tests for all operation modes and permission combinations
+- Real-world scenarios (audit tables, system tables, standard entities)
+
+#### Added - Documentation
+- `docs/operation-modes.md` - Operation modes guide
+- `docs/role-permissions.md` - Role-based permissions guide
+- Updated API reference with new entity fields
+
+---
+
 ## [0.2.0] - 2025-12-07
 
 ### Phase 4 Complete: API Service & Publishing Infrastructure
@@ -153,7 +215,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Roadmap
 
-### [0.3.0] - Planned
+### [0.4.0] - Planned
+- Entity Spec Generator UI - Visual tool to create YAML specs from DB schema
 - Integration examples for Firebase, Auth0, NextAuth
 - E2E testing with Playwright
 - Performance optimizations

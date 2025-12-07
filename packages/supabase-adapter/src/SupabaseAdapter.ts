@@ -13,7 +13,12 @@ import {
   UpdateResult,
   DeleteResult,
   Transaction,
-  OperationLog
+  OperationLog,
+  OperationMode,
+  EntityDefinition,
+  EntityOperation,
+  isOperationAllowedByMode,
+  hasEntityPermission
 } from '@samas-it-services/dataspec-core';
 
 /**
@@ -534,6 +539,104 @@ export class SupabaseAdapter implements DatabaseAdapter {
     }
 
     return count || 0;
+  }
+
+  // ==========================================================================
+  // Entity Permission Methods
+  // ==========================================================================
+
+  /**
+   * Fetch all enabled entities from dataspec_entities table
+   */
+  async getEntities(): Promise<EntityDefinition[]> {
+    const { data, error } = await this.client
+      .from('dataspec_entities')
+      .select('*')
+      .eq('enabled', true)
+      .order('category')
+      .order('sort_order');
+
+    if (error) {
+      throw new DatabaseError(error.message, error.code, error.details);
+    }
+
+    return (data || []).map(this.mapEntityRow);
+  }
+
+  /**
+   * Fetch entities that the current user can view
+   */
+  async getEntitiesForUser(operation?: EntityOperation): Promise<EntityDefinition[]> {
+    const allEntities = await this.getEntities();
+
+    return allEntities.filter(entity => {
+      // If operation specified, check that specific operation
+      if (operation) {
+        return hasEntityPermission(entity, operation, this.userRoles);
+      }
+      // Default to view permission
+      return hasEntityPermission(entity, 'view', this.userRoles);
+    });
+  }
+
+  /**
+   * Get a single entity by name
+   */
+  async getEntityByName(name: string): Promise<EntityDefinition | null> {
+    const { data, error } = await this.client
+      .from('dataspec_entities')
+      .select('*')
+      .eq('name', name)
+      .eq('enabled', true)
+      .single();
+
+    if (error) {
+      if (error.code === 'PGRST116') {
+        return null;
+      }
+      throw new DatabaseError(error.message, error.code, error.details);
+    }
+
+    return data ? this.mapEntityRow(data) : null;
+  }
+
+  /**
+   * Check if the current user can perform an operation on an entity
+   */
+  canPerformOperation(entity: EntityDefinition, operation: EntityOperation): boolean {
+    return hasEntityPermission(entity, operation, this.userRoles);
+  }
+
+  /**
+   * Check if an operation is allowed by the entity's mode (ignores roles)
+   */
+  isOperationAllowedByMode(entity: EntityDefinition, operation: EntityOperation): boolean {
+    return isOperationAllowedByMode(entity.operationMode, operation);
+  }
+
+  /**
+   * Map a database row to EntityDefinition
+   */
+  private mapEntityRow(row: any): EntityDefinition {
+    return {
+      id: row.id,
+      name: row.name,
+      displayName: row.display_name,
+      description: row.description,
+      tableName: row.table_name,
+      operationMode: row.operation_mode as OperationMode || OperationMode.FULL,
+      permissions: {
+        viewRoles: row.view_roles || ['super_admin'],
+        importRoles: row.import_roles || ['super_admin'],
+        exportRoles: row.export_roles || ['super_admin']
+      },
+      category: row.category || 'general',
+      sortOrder: row.sort_order || 0,
+      icon: row.icon,
+      enabled: row.enabled !== false,
+      createdAt: row.created_at,
+      updatedAt: row.updated_at
+    };
   }
 }
 

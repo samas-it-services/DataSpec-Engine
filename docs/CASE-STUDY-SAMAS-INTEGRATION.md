@@ -882,30 +882,328 @@ hooks:
 
 **Best Practice:** Reuse existing role views/tables rather than duplicating role definitions. Reference existing user tables via foreign keys.
 
+### 10.6 Why a Custom DataSpecProvider Was Required
+
+**Learning:** The SAMAS integration could not use `@samas-it-services/dataspec-react`'s built-in provider directly. A completely custom `DataSpecProvider.tsx` was implemented for the following reasons:
+
+1. **Different Authentication Context**
+   - SAMAS uses `@supabase/auth-helpers-react` with its own `useSupabaseClient` and `useUser` hooks
+   - DataSpec React expects a different auth interface
+   - Required creating `useDataSpecAuth.ts` as an adapter hook
+
+2. **Missing Request Management in Original Provider**
+   - No request deduplication (concurrent calls create duplicate network requests)
+   - No response caching (every mount triggers fresh API calls)
+   - No AbortController support (requests continue after unmount)
+
+3. **React 18 Strict Mode Incompatibility**
+   - React 18 Strict Mode double-invokes useEffect callbacks
+   - Without proper guards, this causes 2x network requests per component mount
+   - Original provider's useCallback dependencies were unstable
+
+4. **Permission System Integration**
+   - SAMAS has its own `usePermissions` hook connected to `user_roles_view`
+   - DataSpec permissions needed to map to SAMAS roles
+   - Required bridging `canImport`, `canExport`, `canUnmask` to SAMAS RBAC
+
+**Root Cause of ERR_INSUFFICIENT_RESOURCES:**
+```
+Browser limits: ~6 concurrent connections per domain
++ React Strict Mode: 2x useEffect invocations
++ No deduplication: Every render triggers new fetch
++ Unstable useCallback: Dependencies recreate on every render
+= ERR_INSUFFICIENT_RESOURCES when multiple components mount
+```
+
+**Solution Pattern:**
+```typescript
+// Request deduplication with refs
+const fetchRef = useRef<Promise<void> | null>(null);
+
+// Response caching with TTL
+const cacheRef = useRef<{data: T, timestamp: number} | null>(null);
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+// AbortController for cleanup
+const abortRef = useRef<AbortController | null>(null);
+
+// Mounted state tracking
+const isMountedRef = useRef(true);
+
+useEffect(() => {
+  let cancelled = false;
+
+  const doFetch = async () => {
+    // Check cache first
+    if (isCacheValid(cacheRef.current)) {
+      setData(cacheRef.current.data);
+      return;
+    }
+
+    // Deduplicate in-flight requests
+    if (fetchRef.current) return;
+
+    // Cancel previous request
+    abortRef.current?.abort();
+    abortRef.current = new AbortController();
+
+    // Fetch with signal
+    fetchRef.current = fetch(url, { signal: abortRef.current.signal });
+    // ...
+  };
+
+  doFetch();
+
+  return () => {
+    cancelled = true;
+    abortRef.current?.abort();
+  };
+}, [stableDeps]); // No function refs in deps!
+```
+
+### 10.7 Adoption Improvement Recommendations
+
+To make DataSpec Engine easier to adopt in future projects, consider the following improvements:
+
+#### 1. Export a Configurable Provider Factory
+Instead of a fixed provider, export a factory function:
+```typescript
+// Current (hard to customize)
+<DataSpecProvider>
+
+// Recommended
+const { DataSpecProvider } = createDataSpecProvider({
+  auth: {
+    getHeaders: async () => myAuthHeaders,
+    getUserRoles: () => myRoles,
+  },
+  api: {
+    baseUrl: '/api/dataspec',
+  },
+});
+```
+
+#### 2. Add Built-in Request Management
+Integrate react-query or similar for automatic:
+- Request deduplication
+- Response caching with TTL
+- Automatic retry with exponential backoff
+- Request cancellation on unmount
+- Stale-while-revalidate patterns
+
+```typescript
+// Use react-query under the hood
+const { data: entities } = useQuery({
+  queryKey: ['dataspec', 'entities'],
+  queryFn: fetchEntities,
+  staleTime: 5 * 60 * 1000,
+});
+```
+
+#### 3. Provide Auth Adapter Interface
+Define a clear interface for auth integration:
+```typescript
+interface DataSpecAuthAdapter {
+  getAccessToken: () => Promise<string | null>;
+  getUserId: () => string | null;
+  getUserRoles: () => string[];
+  onUnauthorized?: () => void;
+}
+
+// Consumer implements this interface
+const myAuthAdapter: DataSpecAuthAdapter = {
+  getAccessToken: async () => supabase.auth.getSession().access_token,
+  getUserId: () => user?.id,
+  getUserRoles: () => permissions.roles,
+};
+```
+
+#### 4. Document React 18 Strict Mode Compatibility
+Add documentation and tests ensuring:
+- Effects handle double-invocation correctly
+- Cleanup functions properly abort requests
+- State updates check mounted status
+- useCallback dependencies are stable
+
+#### 5. Provide Example Integrations
+Create official examples for common auth providers:
+- Supabase Auth
+- Firebase Auth
+- Auth0
+- NextAuth.js
+- Custom JWT
+
+#### 6. Support Edge Function Customization
+Allow consumers to customize edge function behavior without copying:
+```typescript
+// dataspec.config.ts
+export default {
+  edgeFunctions: {
+    entities: {
+      tableName: 'my_entities_table', // Override default table
+      additionalColumns: ['custom_field'],
+    },
+    auth: {
+      rolesQuery: 'SELECT role FROM my_roles WHERE user_id = $1',
+    },
+  },
+};
+```
+
+### 10.8 ERR_INSUFFICIENT_RESOURCES - Deep Dive
+
+**Problem:** When navigating to DataSpec pages, the browser console shows:
+```
+GET https://.../functions/v1/dataspec-specs?entityId=...&includeContent=true net::ERR_INSUFFICIENT_RESOURCES
+GET https://.../functions/v1/dataspec-entities?includeSpecCount=true net::ERR_INSUFFICIENT_RESOURCES
+```
+
+**Root Cause Analysis:**
+
+1. **Browser Connection Limits**
+   - Browsers limit concurrent HTTP/1.1 connections to ~6 per domain
+   - HTTP/2 multiplexes but can still hit resource limits under load
+
+2. **React Strict Mode Effect**
+   - Development mode with Strict Mode calls useEffect twice
+   - Each effect potentially triggers a fetch request
+
+3. **Unstable useCallback Dependencies**
+   ```typescript
+   // PROBLEM: auth object is new on every render
+   const fetchEntities = useCallback(async () => {
+     const headers = await auth.getHeaders(); // auth changes every render
+     // ...
+   }, [apiBaseUrl, auth]); // auth in deps = new function every time
+
+   useEffect(() => {
+     fetchEntities();
+   }, [fetchEntities]); // fetchEntities changes = effect re-runs
+   ```
+
+4. **No In-Flight Request Tracking**
+   - Each call to fetchEntities() creates a new fetch
+   - No deduplication = multiple concurrent requests to same endpoint
+
+5. **Cascade Effect**
+   - EntitySelector mounts → fetchEntities() called (×2 in Strict Mode)
+   - SpecSelector mounts → fetchSpecs() called (×2 in Strict Mode)
+   - Navigation between pages = mount/unmount cycles
+   - Result: Burst of 6+ concurrent requests exhausts browser resources
+
+**Solution Implemented:**
+See the updated `DataSpecProvider.tsx` in SAMAS which implements:
+- Request deduplication via refs
+- Response caching with 5-minute TTL
+- AbortController for cleanup
+- Mounted state tracking
+- Stable useEffect dependencies
+
 ---
 
-## 11. Conclusion
+## 11. Full Customizations Inventory
 
-This case study documents a complete integration architecture for embedding the DataSpec Engine into SAMAS Charity Finance. The plan demonstrates several key software engineering principles:
+This section documents every customization SAMAS had to make to integrate DataSpec Engine:
 
-1. **Modular Design** - DataSpec was built as reusable packages that can be integrated into any Supabase application
-2. **Separation of Concerns** - Clear boundaries between UI, API, and database layers
-3. **Theming Flexibility** - BEM class naming allows host applications to provide their own styling
-4. **Security by Design** - Role-based access, audit logging, and sensitivity masking are core features
-5. **Incremental Delivery** - 8 phases can be implemented and tested independently
+### Files Created in SAMAS
+
+| File | Lines | Purpose |
+|------|-------|---------|
+| `src/providers/DataSpecProvider.tsx` | 648 | Custom provider with caching, deduplication, auth bridging |
+| `src/hooks/useDataSpecAuth.ts` | 70 | Bridges SAMAS Supabase auth to DataSpec interface |
+| `src/pages/dataspec/index.tsx` | ~200 | Dashboard page |
+| `src/pages/dataspec/import.tsx` | ~300 | Multi-step import wizard |
+| `src/pages/dataspec/export.tsx` | ~200 | Export page with masking |
+| `src/pages/dataspec/masking.tsx` | ~150 | Masking/unmasking UI |
+| `src/pages/dataspec/specs.tsx` | ~250 | YAML specification management |
+| `src/pages/dataspec/audit.tsx` | ~200 | Operation audit logs |
+| `src/styles/dataspec.css` | ~400 | BEM to Tailwind CSS mapping |
+| `supabase/functions/dataspec-entities/index.ts` | 89 | Edge function for entities API |
+| `supabase/functions/dataspec-specs/index.ts` | 94 | Edge function for specs API |
+| `supabase/functions/dataspec-preview/index.ts` | ~150 | Edge function for preview API |
+| `supabase/functions/dataspec-validate/index.ts` | ~80 | Edge function for YAML validation |
+| `supabase/functions/dataspec-masking/index.ts` | ~120 | Edge function for masking API |
+| `supabase/functions/_shared/auth.ts` | ~60 | Shared auth utilities for edge functions |
+| `supabase/functions/_shared/cors.ts` | ~40 | Shared CORS utilities |
+| `supabase/migrations/20251207_create_dataspec_tables.sql` | 373 | Database schema |
+| `supabase/migrations/20251207000002_dataspec_sample_specs.sql` | ~500 | Sample YAML specs |
+| `scripts/restore-remote-db.sh` | ~200 | Database restore script |
+
+### Files Modified in SAMAS
+
+| File | Changes |
+|------|---------|
+| `package.json` | Added @samas-it-services/dataspec-core, dataspec-react |
+| `.npmrc` | Added GitHub Package Registry configuration |
+| `src/App.tsx` | Added DataSpecProvider wrapper and /dataspec/* routes |
+| `src/components/layout/Sidebar.tsx` | Added DataSpec navigation section |
+| `tailwind.config.ts` | Added DataSpec package paths to content array |
+| `src/index.css` | Import dataspec.css stylesheet |
+
+### Why Each Customization Was Needed
+
+| Customization | Reason |
+|---------------|--------|
+| **Custom DataSpecProvider** | Built-in provider lacked caching, deduplication, caused ERR_INSUFFICIENT_RESOURCES |
+| **useDataSpecAuth hook** | Bridge between SAMAS's @supabase/auth-helpers-react and DataSpec's expected auth |
+| **Custom pages** | Need to integrate with SAMAS layout, shadcn/ui components, routing patterns |
+| **BEM-to-Tailwind CSS** | DataSpec components use BEM classes; SAMAS uses Tailwind + shadcn/ui |
+| **Edge Functions** | DataSpec API needs to run on SAMAS's Supabase project, using SAMAS's auth |
+| **Database migrations** | DataSpec tables with RLS policies using SAMAS's user_roles_view |
+| **Sample specs** | YAML specs configured for SAMAS's specific entities (transactions, invoices, etc.) |
+
+### What Could Be Shared vs Custom
+
+| Component | Shared from Package | Custom in SAMAS |
+|-----------|--------------------|--------------------|
+| Core YAML parsing | ✅ @samas-it-services/dataspec-core | |
+| Transformation engine | ✅ @samas-it-services/dataspec-core | |
+| Masking engine | ✅ @samas-it-services/dataspec-core | |
+| React Provider | | ✅ Custom (request management) |
+| React hooks | | ✅ Custom (auth bridging) |
+| UI Components | Partial (types only) | ✅ Custom pages |
+| Edge Functions | | ✅ Custom (per-project) |
+| Database Schema | | ✅ Custom (per-project) |
+| Styling | | ✅ Custom (per-project) |
+
+---
+
+## 12. Conclusion
+
+This case study documents a complete integration architecture for embedding the DataSpec Engine into SAMAS Charity Finance. The integration revealed several key learnings:
+
+1. **Modular Design Works** - The core YAML parsing and masking engine from `@samas-it-services/dataspec-core` worked as expected
+2. **React Provider Needed Rework** - The built-in provider lacked proper request management for production use
+3. **Auth Bridging is Essential** - Every project will need a custom auth adapter
+4. **Edge Functions Are Per-Project** - Cannot be shared, must be deployed to each Supabase project
+5. **Styling Must Be Custom** - BEM-to-Tailwind mapping required for each project's design system
+
+### Key Takeaways for Future Integrations
+
+1. **Budget 40-60% custom code** - Even with a well-designed library, integration requires significant customization
+2. **Test with React Strict Mode** - Many request management issues only appear in Strict Mode
+3. **Cache aggressively** - Implement caching from day one to avoid resource exhaustion
+4. **Document the auth interface** - Make it clear what auth providers need to implement
 
 ### Implementation Status
 
 | Phase | Status |
 |-------|--------|
-| Phase 1: Package Installation | Ready for implementation |
-| Phase 2: Database Setup | Ready for implementation |
-| Phase 3: Edge Functions | Ready for implementation |
-| Phase 4: CSS/Styling | Ready for implementation |
-| Phase 5: Provider Setup | Ready for implementation |
-| Phase 6: Pages & Routes | Ready for implementation |
-| Phase 7: Navigation | Ready for implementation |
-| Phase 8: Sample Specs | Ready for implementation |
+| Phase 1: Package Installation | ✅ Complete |
+| Phase 2: Database Setup | ✅ Complete |
+| Phase 3: Edge Functions | ✅ Complete |
+| Phase 4: CSS/Styling | ✅ Complete |
+| Phase 5: Provider Setup | ✅ Complete (with custom fixes) |
+| Phase 6: Pages & Routes | ✅ Complete |
+| Phase 7: Navigation | ✅ Complete |
+| Phase 8: Sample Specs | ✅ Complete |
+
+### Bug Fixes Applied
+
+| Issue | Fix | Date |
+|-------|-----|------|
+| ERR_INSUFFICIENT_RESOURCES | Added request deduplication, caching, AbortController | Dec 7, 2025 |
+| TypeScript header types | Added index signature to DataSpecAuthHeaders | Dec 7, 2025 |
 
 ### Resources
 

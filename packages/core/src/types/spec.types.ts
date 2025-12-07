@@ -6,6 +6,146 @@
  * throughout the engine.
  */
 
+// =============================================================================
+// Entity Operation Mode & Permissions
+// =============================================================================
+
+/**
+ * Operation modes for entities
+ * Controls which operations are allowed on an entity
+ */
+export enum OperationMode {
+  /** All operations allowed: view, import, export */
+  FULL = 'full',
+  /** View and export only, no import (e.g., audit tables) */
+  EXPORT_ONLY = 'export_only',
+  /** View only, no import or export (e.g., system/reference tables) */
+  VIEW_ONLY = 'view_only',
+  /** View and import only, no export (e.g., staging tables) */
+  IMPORT_ONLY = 'import_only'
+}
+
+/**
+ * Operations that can be performed on an entity
+ */
+export type EntityOperation = 'view' | 'import' | 'export';
+
+/**
+ * Role-based permissions for each operation
+ */
+export interface EntityPermissions {
+  /** Roles allowed to view this entity in the UI */
+  viewRoles: string[];
+  /** Roles allowed to import data to this entity */
+  importRoles: string[];
+  /** Roles allowed to export data from this entity */
+  exportRoles: string[];
+}
+
+/**
+ * Entity definition for the registry
+ */
+export interface EntityDefinition {
+  /** Unique identifier */
+  id: string;
+  /** Entity name (unique, snake_case) */
+  name: string;
+  /** Display name for UI */
+  displayName: string;
+  /** Description of the entity */
+  description?: string;
+  /** Database table name */
+  tableName: string;
+  /** Operation mode controlling allowed operations */
+  operationMode: OperationMode;
+  /** Role-based permissions */
+  permissions: EntityPermissions;
+  /** Category for grouping in UI (e.g., 'core', 'financial', 'audit', 'system') */
+  category?: string;
+  /** Sort order within category */
+  sortOrder?: number;
+  /** Icon name for UI */
+  icon?: string;
+  /** Whether the entity is enabled */
+  enabled: boolean;
+  /** Created timestamp */
+  createdAt?: string;
+  /** Updated timestamp */
+  updatedAt?: string;
+}
+
+/**
+ * Check if an operation is allowed by the operation mode
+ * This is a pure function that doesn't check roles, only mode restrictions
+ */
+export function isOperationAllowedByMode(
+  mode: OperationMode,
+  operation: EntityOperation
+): boolean {
+  switch (mode) {
+    case OperationMode.FULL:
+      return true;
+    case OperationMode.EXPORT_ONLY:
+      return operation === 'view' || operation === 'export';
+    case OperationMode.VIEW_ONLY:
+      return operation === 'view';
+    case OperationMode.IMPORT_ONLY:
+      return operation === 'view' || operation === 'import';
+    default:
+      return false;
+  }
+}
+
+/**
+ * Check if a user has permission for an operation on an entity
+ * This checks both the operation mode and the role-based permissions
+ */
+export function hasEntityPermission(
+  entity: EntityDefinition,
+  operation: EntityOperation,
+  userRoles: string[]
+): boolean {
+  // First check if the operation mode allows this operation
+  if (!isOperationAllowedByMode(entity.operationMode, operation)) {
+    return false;
+  }
+
+  // Get the roles allowed for this operation
+  let allowedRoles: string[];
+  switch (operation) {
+    case 'view':
+      allowedRoles = entity.permissions.viewRoles;
+      break;
+    case 'import':
+      allowedRoles = entity.permissions.importRoles;
+      break;
+    case 'export':
+      allowedRoles = entity.permissions.exportRoles;
+      break;
+    default:
+      return false;
+  }
+
+  // Check if the user has any of the allowed roles
+  return userRoles.some(role => allowedRoles.includes(role));
+}
+
+/**
+ * Entity categories for grouping
+ */
+export enum EntityCategory {
+  CORE = 'core',
+  FINANCIAL = 'financial',
+  AUDIT = 'audit',
+  SYSTEM = 'system',
+  LINK = 'link',
+  GENERAL = 'general'
+}
+
+// =============================================================================
+// Sensitivity & Data Classification
+// =============================================================================
+
 /**
  * Sensitivity levels for data classification
  */

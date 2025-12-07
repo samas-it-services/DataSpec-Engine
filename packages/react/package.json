@@ -1,6 +1,6 @@
 {
   "name": "@samas-it-services/dataspec-react",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "React UI components for DataSpec Engine",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

@@ -1,6 +1,6 @@
 {
   "name": "@samas-it-services/dataspec-api",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "REST API service for DataSpec Engine - Express + Supabase Edge Functions",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

@@ -1082,8 +1082,8 @@ columns:
 - [Role Permissions Guide](./role-permissions.md) - Set up role-based access
 - [YAML Spec Guide](./yaml-spec-guide.md) - Complete specification reference
 - [API Reference](./api-reference.md) - Full API documentation
-- [SAMAS Case Study](./case-studies/samas-charity-finance.md) - Production example
+- [saMas Case Study](./case-studies/samas-charity-finance.md) - Production example
 
 ---
 
-**Need help?** Review the [SAMAS Case Study](./case-studies/samas-charity-finance.md) for a complete production integration example.
+**Need help?** Review the [saMas Case Study](./case-studies/samas-charity-finance.md) for a complete production integration example.

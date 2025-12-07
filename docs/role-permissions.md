@@ -160,7 +160,7 @@ const canExport = adapter.canPerformOperation(entity, 'export');
 
 ## Common Role Patterns
 
-### SAMAS Charity Finance Roles
+### saMas Charity Finance Roles
 
 | Role | Description | Typical Access |
 |------|-------------|----------------|

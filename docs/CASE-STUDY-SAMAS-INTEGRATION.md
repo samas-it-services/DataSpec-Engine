@@ -1,4 +1,4 @@
-# Case Study: DataSpec Engine Integration with SAMAS Charity Finance
+# Case Study: DataSpec Engine Integration with saMas Charity Finance
 
 **Document Version:** 1.0
 **Date:** December 7, 2025
@@ -9,7 +9,7 @@
 
 ## Executive Summary
 
-This case study documents the complete planning and architecture for integrating the **DataSpec Engine** - a YAML-first, API-first data import/export specification engine - into **SAMAS Charity Finance**, a comprehensive financial management system for charitable organizations.
+This case study documents the complete planning and architecture for integrating the **DataSpec Engine** - a YAML-first, API-first data import/export specification engine - into **saMas Charity Finance**, a comprehensive financial management system for charitable organizations.
 
 The integration demonstrates how a reusable, enterprise-grade data processing library can be seamlessly embedded into an existing production application while respecting its established design patterns, authentication system, and visual branding.
 
@@ -51,9 +51,9 @@ DataSpec Engine is a YAML-first, API-first, sensitivity-aware import/export fram
 | `@samas-it-services/dataspec-react` | React UI components and hooks |
 | `@samas-it-services/dataspec-api` | REST API and Supabase Edge Functions |
 
-### 1.2 SAMAS Charity Finance Overview
+### 1.2 saMas Charity Finance Overview
 
-SAMAS Charity Finance is a comprehensive financial management platform designed for charitable organizations. Built with modern web technologies, it provides:
+saMas Charity Finance is a comprehensive financial management platform designed for charitable organizations. Built with modern web technologies, it provides:
 
 - Multi-school financial tracking
 - Donor management and receipts
@@ -75,7 +75,7 @@ SAMAS Charity Finance is a comprehensive financial management platform designed 
 
 ### 2.1 Business Requirements
 
-SAMAS Charity Finance needed to:
+saMas Charity Finance needed to:
 
 1. **Import bulk data** from legacy systems (CSV/Excel)
 2. **Export reports** with automatic sensitive data masking
@@ -106,7 +106,7 @@ SAMAS Charity Finance needed to:
 
 ```
 ┌──────────────────────────────────────────────────────────────────────────┐
-│                        SAMAS Charity Finance                              │
+│                        saMas Charity Finance                              │
 │  ┌────────────────────────────────────────────────────────────────────┐  │
 │  │                    Existing Application                             │  │
 │  │  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ ┌─────────────┐  │  │
@@ -155,7 +155,7 @@ SAMAS Charity Finance needed to:
 | **Dedicated `/dataspec/*` routes** | Clean separation from existing features, easier maintenance |
 | **Full feature suite** | Import, Export, Masking, Specs, Audit - complete data management |
 | **Same Supabase project** | Leverage existing auth, avoid data duplication |
-| **Tailwind CSS integration** | Match SAMAS theme via HSL variables |
+| **Tailwind CSS integration** | Match saMas theme via HSL variables |
 | **BEM-to-Tailwind mapping** | DataSpec uses BEM classes; map to shadcn styling |
 
 ---
@@ -175,12 +175,12 @@ Phase 2: Database Setup
 
 Phase 3: Edge Functions Deployment
     ├── Copy edge functions from DataSpec
-    ├── Modify auth to use SAMAS roles
+    ├── Modify auth to use saMas roles
     └── Deploy to Supabase
 
 Phase 4: CSS/Styling Integration
     ├── Create dataspec.css stylesheet
-    └── Map BEM classes to SAMAS theme
+    └── Map BEM classes to saMas theme
 
 Phase 5: Provider & Context Setup
     ├── Create useDataSpecAuth hook
@@ -195,7 +195,7 @@ Phase 7: Navigation Integration
     └── Add DataSpec section to sidebar
 
 Phase 8: Sample Specifications
-    └── Create seed YAML specs for SAMAS entities
+    └── Create seed YAML specs for saMas entities
 ```
 
 ### 4.2 Dependency Graph
@@ -304,7 +304,7 @@ All 4 packages successfully published:
 
 ### 6.1 Authentication Integration
 
-DataSpec needs to authenticate with SAMAS's existing Supabase auth system:
+DataSpec needs to authenticate with saMas's existing Supabase auth system:
 
 ```typescript
 // src/hooks/useDataSpecAuth.ts
@@ -345,7 +345,7 @@ export function DataSpecProviderWrapper({ children }) {
       roles: userRoles
     },
     theme: {
-      // Map to SAMAS HSL variables
+      // Map to saMas HSL variables
       primaryColor: 'hsl(var(--primary))',
       backgroundColor: 'hsl(var(--background))'
     }
@@ -361,7 +361,7 @@ export function DataSpecProviderWrapper({ children }) {
 
 ### 6.3 CSS Theme Mapping
 
-DataSpec React components use BEM class naming. These must be styled to match SAMAS:
+DataSpec React components use BEM class naming. These must be styled to match saMas:
 
 ```css
 /* src/styles/dataspec.css */
@@ -440,7 +440,7 @@ DataSpec React components use BEM class naming. These must be styled to match SA
 ```sql
 -- supabase/migrations/20250107000001_dataspec_tables.sql
 
--- Entity registry for SAMAS
+-- Entity registry for saMas
 CREATE TABLE dataspec_entities (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name TEXT NOT NULL UNIQUE,
@@ -521,7 +521,7 @@ CREATE POLICY "Users can read own logs" ON dataspec_operation_logs
   FOR SELECT TO authenticated
   USING (user_id = auth.uid());
 
--- Seed SAMAS entities
+-- Seed saMas entities
 INSERT INTO dataspec_entities (name, display_name, description, table_name, icon) VALUES
   ('transactions', 'Transactions', 'Financial transactions', 'transactions', 'receipt'),
   ('invoices', 'Invoices', 'Invoice records', 'invoices', 'file-text'),
@@ -553,7 +553,7 @@ npm install @samas-it-services/dataspec-react@^0.1.0 @samas-it-services/dataspec
 
 ### Phase 2: Database Setup
 
-**Objective:** Create DataSpec tables in SAMAS Supabase database
+**Objective:** Create DataSpec tables in saMas Supabase database
 
 **Files Created:**
 - `/supabase/migrations/20250107000001_dataspec_tables.sql`
@@ -591,7 +591,7 @@ packages/api/supabase-functions/
 ```
 samas-charity-finance/supabase/functions/
 ├── _shared/
-│   ├── auth.ts  ← Modified for SAMAS roles
+│   ├── auth.ts  ← Modified for saMas roles
 │   └── cors.ts
 ├── dataspec-entities/index.ts
 ├── dataspec-specs/index.ts
@@ -604,7 +604,7 @@ samas-charity-finance/supabase/functions/
 ```typescript
 // _shared/auth.ts
 async function getUserRoles(supabase: SupabaseClient, userId: string) {
-  // Query SAMAS's user_roles_view instead of generic roles table
+  // Query saMas's user_roles_view instead of generic roles table
   const { data, error } = await supabase
     .from('user_roles_view')
     .select('role_name')
@@ -619,7 +619,7 @@ async function getUserRoles(supabase: SupabaseClient, userId: string) {
 
 ### Phase 4: CSS/Styling Integration
 
-**Objective:** Style DataSpec components to match SAMAS theme
+**Objective:** Style DataSpec components to match saMas theme
 
 **Files Created:**
 - `/src/styles/dataspec.css` (400+ lines of BEM-to-Tailwind mappings)
@@ -637,7 +637,7 @@ async function getUserRoles(supabase: SupabaseClient, userId: string) {
 
 ### Phase 5: Provider & Context Setup
 
-**Objective:** Wire DataSpec provider into SAMAS React tree
+**Objective:** Wire DataSpec provider into saMas React tree
 
 **Files Created:**
 - `/src/hooks/useDataSpecAuth.ts`
@@ -667,7 +667,7 @@ async function getUserRoles(supabase: SupabaseClient, userId: string) {
 
 ### Phase 6: Pages & Routes
 
-**Objective:** Create DataSpec UI pages integrated into SAMAS
+**Objective:** Create DataSpec UI pages integrated into saMas
 
 **Files Created:**
 ```
@@ -694,7 +694,7 @@ async function getUserRoles(supabase: SupabaseClient, userId: string) {
 
 ### Phase 7: Navigation Integration
 
-**Objective:** Add DataSpec section to SAMAS sidebar
+**Objective:** Add DataSpec section to saMas sidebar
 
 **Files Modified:**
 - `/src/components/layout/Sidebar.tsx`
@@ -726,7 +726,7 @@ async function getUserRoles(supabase: SupabaseClient, userId: string) {
 
 ### Phase 8: Sample Specifications
 
-**Objective:** Provide ready-to-use YAML specs for SAMAS entities
+**Objective:** Provide ready-to-use YAML specs for saMas entities
 
 **Files Created:**
 - `/supabase/migrations/20250107000002_dataspec_sample_specs.sql`
@@ -814,7 +814,7 @@ hooks:
 - [ ] GitHub token has `packages:read` scope
 - [ ] Supabase CLI installed and authenticated
 - [ ] Local Supabase running or remote project accessible
-- [ ] SAMAS Charity Finance builds successfully
+- [ ] saMas Charity Finance builds successfully
 
 ### 9.2 Phase-by-Phase Testing
 
@@ -823,7 +823,7 @@ hooks:
 | 1 | `npm ls @samas-it-services/dataspec-react` shows installed |
 | 2 | `supabase db push` succeeds, tables visible in dashboard |
 | 3 | `curl ${SUPABASE_URL}/functions/v1/dataspec-entities` returns 200 |
-| 4 | Components render with correct SAMAS colors in light/dark mode |
+| 4 | Components render with correct saMas colors in light/dark mode |
 | 5 | `useDataSpec()` hook returns entities when provider mounted |
 | 6 | Navigate to `/dataspec/*` routes without errors |
 | 7 | DataSpec section visible in sidebar for admin users |
@@ -884,10 +884,10 @@ hooks:
 
 ### 10.6 Why a Custom DataSpecProvider Was Required
 
-**Learning:** The SAMAS integration could not use `@samas-it-services/dataspec-react`'s built-in provider directly. A completely custom `DataSpecProvider.tsx` was implemented for the following reasons:
+**Learning:** The saMas integration could not use `@samas-it-services/dataspec-react`'s built-in provider directly. A completely custom `DataSpecProvider.tsx` was implemented for the following reasons:
 
 1. **Different Authentication Context**
-   - SAMAS uses `@supabase/auth-helpers-react` with its own `useSupabaseClient` and `useUser` hooks
+   - saMas uses `@supabase/auth-helpers-react` with its own `useSupabaseClient` and `useUser` hooks
    - DataSpec React expects a different auth interface
    - Required creating `useDataSpecAuth.ts` as an adapter hook
 
@@ -902,9 +902,9 @@ hooks:
    - Original provider's useCallback dependencies were unstable
 
 4. **Permission System Integration**
-   - SAMAS has its own `usePermissions` hook connected to `user_roles_view`
-   - DataSpec permissions needed to map to SAMAS roles
-   - Required bridging `canImport`, `canExport`, `canUnmask` to SAMAS RBAC
+   - saMas has its own `usePermissions` hook connected to `user_roles_view`
+   - DataSpec permissions needed to map to saMas roles
+   - Required bridging `canImport`, `canExport`, `canUnmask` to saMas RBAC
 
 **Root Cause of ERR_INSUFFICIENT_RESOURCES:**
 ```
@@ -1092,7 +1092,7 @@ GET https://.../functions/v1/dataspec-entities?includeSpecCount=true net::ERR_IN
    - Result: Burst of 6+ concurrent requests exhausts browser resources
 
 **Solution Implemented:**
-See the updated `DataSpecProvider.tsx` in SAMAS which implements:
+See the updated `DataSpecProvider.tsx` in saMas which implements:
 - Request deduplication via refs
 - Response caching with 5-minute TTL
 - AbortController for cleanup
@@ -1103,14 +1103,14 @@ See the updated `DataSpecProvider.tsx` in SAMAS which implements:
 
 ## 11. Full Customizations Inventory
 
-This section documents every customization SAMAS had to make to integrate DataSpec Engine:
+This section documents every customization saMas had to make to integrate DataSpec Engine:
 
-### Files Created in SAMAS
+### Files Created in saMas
 
 | File | Lines | Purpose |
 |------|-------|---------|
 | `src/providers/DataSpecProvider.tsx` | 648 | Custom provider with caching, deduplication, auth bridging |
-| `src/hooks/useDataSpecAuth.ts` | 70 | Bridges SAMAS Supabase auth to DataSpec interface |
+| `src/hooks/useDataSpecAuth.ts` | 70 | Bridges saMas Supabase auth to DataSpec interface |
 | `src/pages/dataspec/index.tsx` | ~200 | Dashboard page |
 | `src/pages/dataspec/import.tsx` | ~300 | Multi-step import wizard |
 | `src/pages/dataspec/export.tsx` | ~200 | Export page with masking |
@@ -1129,7 +1129,7 @@ This section documents every customization SAMAS had to make to integrate DataSp
 | `supabase/migrations/20251207000002_dataspec_sample_specs.sql` | ~500 | Sample YAML specs |
 | `scripts/restore-remote-db.sh` | ~200 | Database restore script |
 
-### Files Modified in SAMAS
+### Files Modified in saMas
 
 | File | Changes |
 |------|---------|
@@ -1145,16 +1145,16 @@ This section documents every customization SAMAS had to make to integrate DataSp
 | Customization | Reason |
 |---------------|--------|
 | **Custom DataSpecProvider** | Built-in provider lacked caching, deduplication, caused ERR_INSUFFICIENT_RESOURCES |
-| **useDataSpecAuth hook** | Bridge between SAMAS's @supabase/auth-helpers-react and DataSpec's expected auth |
-| **Custom pages** | Need to integrate with SAMAS layout, shadcn/ui components, routing patterns |
-| **BEM-to-Tailwind CSS** | DataSpec components use BEM classes; SAMAS uses Tailwind + shadcn/ui |
-| **Edge Functions** | DataSpec API needs to run on SAMAS's Supabase project, using SAMAS's auth |
-| **Database migrations** | DataSpec tables with RLS policies using SAMAS's user_roles_view |
-| **Sample specs** | YAML specs configured for SAMAS's specific entities (transactions, invoices, etc.) |
+| **useDataSpecAuth hook** | Bridge between saMas's @supabase/auth-helpers-react and DataSpec's expected auth |
+| **Custom pages** | Need to integrate with saMas layout, shadcn/ui components, routing patterns |
+| **BEM-to-Tailwind CSS** | DataSpec components use BEM classes; saMas uses Tailwind + shadcn/ui |
+| **Edge Functions** | DataSpec API needs to run on saMas's Supabase project, using saMas's auth |
+| **Database migrations** | DataSpec tables with RLS policies using saMas's user_roles_view |
+| **Sample specs** | YAML specs configured for saMas's specific entities (transactions, invoices, etc.) |
 
 ### What Could Be Shared vs Custom
 
-| Component | Shared from Package | Custom in SAMAS |
+| Component | Shared from Package | Custom in saMas |
 |-----------|--------------------|--------------------|
 | Core YAML parsing | ✅ @samas-it-services/dataspec-core | |
 | Transformation engine | ✅ @samas-it-services/dataspec-core | |
@@ -1170,7 +1170,7 @@ This section documents every customization SAMAS had to make to integrate DataSp
 
 ## 12. Conclusion
 
-This case study documents a complete integration architecture for embedding the DataSpec Engine into SAMAS Charity Finance. The integration revealed several key learnings:
+This case study documents a complete integration architecture for embedding the DataSpec Engine into saMas Charity Finance. The integration revealed several key learnings:
 
 1. **Modular Design Works** - The core YAML parsing and masking engine from `@samas-it-services/dataspec-core` worked as expected
 2. **React Provider Needed Rework** - The built-in provider lacked proper request management for production use
@@ -1208,7 +1208,7 @@ This case study documents a complete integration architecture for embedding the 
 ### Resources
 
 - **DataSpec Engine Repository:** `/DataSpec-Engine/`
-- **SAMAS Charity Finance Repository:** `/samas-charity-finance/`
+- **saMas Charity Finance Repository:** `/samas-charity-finance/`
 - **Published Packages:** https://github.com/orgs/samas-it-services/packages
 - **Integration Plan:** This document
 

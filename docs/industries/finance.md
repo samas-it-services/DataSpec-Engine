@@ -290,7 +290,7 @@ columns:
 
 ## 🏢 Who Uses DataSpec for Finance?
 
-### 🕌 SAMAS Charity Finance (Production)
+### 🕌 saMas Charity Finance (Production)
 
 Real-world deployment managing financial operations:
 
@@ -383,4 +383,4 @@ const exportResult = await dataspec.export({
 
 ---
 
-**Need help with financial services integration?** See our [Integration Guide](../integration-guide.md) or review the [SAMAS Case Study](../case-studies/samas-charity-finance.md) for a production example.
+**Need help with financial services integration?** See our [Integration Guide](../integration-guide.md) or review the [saMas Case Study](../case-studies/samas-charity-finance.md) for a production example.

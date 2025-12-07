@@ -7,6 +7,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.2.1] - 2025-12-07
+
+### Documentation & JSON Schema Enhancements
+
+#### Enhanced - JSON Schema (`schema.json`)
+- **Added comprehensive descriptions** to all schema properties for IDE auto-completion
+- **Added examples** to key properties (sensitivity levels, masking modes, validation types)
+- **Updated `$id`** to point to jsDelivr CDN for public accessibility
+- **Added both snake_case and camelCase variants** for masking properties to support YAML and TypeScript conventions
+- **Added missing lookup properties** (`return_field`, `cache_ttl`)
+- **Fixed masking schema** to include `visible_chars`, `position`, `partial_start`, `partial_end`
+
+#### Enhanced - TypeScript Types (`spec.types.ts`)
+- **Added `visibleChars` and `position`** to `MaskingConfig` for simple partial masking
+- **Added `returnField` and `cacheTtl`** to `LookupConfig`
+- **Added comprehensive JSDoc comments** to all interfaces
+- **Added type guards** for masking and lookup configurations
+
+#### Added - Documentation
+- **`docs/SCHEMA.md`** - Schema usage guide with IDE setup instructions
+- **Rewrote `docs/yaml-spec-guide.md`** with reference tables for all options
+- **Added schema directive** to example YAML files for IDE auto-completion
+
+#### Changed - Naming Convention
+- **Standardized on "saMas"** naming (not SAMAS or samas) across all documentation and comments
+
+#### Fixed
+- **Documentation/implementation gaps** - Aligned masking property names between docs and schema
+
+---
+
 ## [0.3.0] - 2025-12-08
 
 ### Entity Operation Modes & Role-Based Permissions
@@ -87,8 +118,8 @@ This release adds comprehensive entity-level access control with operation modes
 | `@samas-it-services/dataspec-react` | 0.2.0 | npm.pkg.github.com |
 | `@samas-it-services/dataspec-api` | 0.2.0 | npm.pkg.github.com |
 
-#### Added - SAMAS Integration Case Study
-- **Comprehensive Integration Guide** - `docs/CASE-STUDY-SAMAS-INTEGRATION.md`
+#### Added - saMas Integration Case Study
+- **Comprehensive Integration Guide** - `docs/CASE-STUDY-saMas-INTEGRATION.md`
 - **ERR_INSUFFICIENT_RESOURCES Fix** - Documented React Strict Mode compatibility patterns
 - **Auth Adapter Pattern** - Recommendations for integrating with existing auth systems
 - **Request Management** - Patterns for request deduplication and caching
@@ -272,7 +303,7 @@ import { DataSpecProvider, EntitySelector } from '@samas-it-services/dataspec-re
 
 ## Contributors
 
-- SAMAS IT Services
+- saMas IT Services
 
 ---
 

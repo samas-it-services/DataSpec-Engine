@@ -1,5 +1,5 @@
 # Product Requirements Document (PRD)
-# DataSpec Engine Integration with SAMAS Charity Finance
+# DataSpec Engine Integration with saMas Charity Finance
 
 **Version:** 1.0
 **Date:** December 7, 2025
@@ -10,14 +10,14 @@
 ## 1. Executive Summary
 
 ### 1.1 Objective
-Integrate DataSpec Engine into SAMAS Charity Finance to provide enterprise-grade YAML-driven data import/export with automatic sensitivity classification, masking, and audit logging.
+Integrate DataSpec Engine into saMas Charity Finance to provide enterprise-grade YAML-driven data import/export with automatic sensitivity classification, masking, and audit logging.
 
 ### 1.2 Key Deliverables
-- New `/dataspec/*` section in SAMAS application
+- New `/dataspec/*` section in saMas application
 - 6 new pages: Dashboard, Import, Export, Masking, Specs, Audit
 - 5 Supabase Edge Functions for API
 - 6 new database tables with RLS policies
-- Full theme integration with SAMAS design system
+- Full theme integration with saMas design system
 
 ---
 
@@ -30,7 +30,7 @@ A YAML-first, API-first data import/export framework with:
 - **5 Sensitivity Levels**: Public, Internal, Confidential, Secret, Highly-Restricted
 - **Automatic Masking** with role-based unmasking
 
-### 2.2 SAMAS Charity Finance
+### 2.2 saMas Charity Finance
 - React 18 + TypeScript + Vite
 - shadcn/ui + Tailwind CSS
 - Supabase (PostgreSQL + Auth + Edge Functions)
@@ -55,7 +55,7 @@ A YAML-first, API-first data import/export framework with:
 
 | ID | Requirement | Priority |
 |----|-------------|----------|
-| NFR-1 | Match SAMAS visual theme (light/dark mode) | Must Have |
+| NFR-1 | Match saMas visual theme (light/dark mode) | Must Have |
 | NFR-2 | Use existing Supabase authentication | Must Have |
 | NFR-3 | Role visibility: super_admin, finance_incharge, admin only | Must Have |
 | NFR-4 | Preview <200 rows in <1 second | Should Have |
@@ -68,7 +68,7 @@ A YAML-first, API-first data import/export framework with:
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│                 SAMAS Charity Finance                    │
+│                 saMas Charity Finance                    │
 │  ┌───────────────────────────────────────────────────┐  │
 │  │              DataSpec Section (/dataspec/*)        │  │
 │  │  Dashboard | Import | Export | Masking | Specs | Audit │
@@ -145,7 +145,7 @@ npm install @samas-it-services/dataspec-react @samas-it-services/dataspec-core
 ### Phase 4: Styling
 **File:** `src/styles/dataspec.css`
 
-Map DataSpec BEM classes to SAMAS Tailwind theme:
+Map DataSpec BEM classes to saMas Tailwind theme:
 - `.dataspec-entity-selector` → Card grid
 - `.dataspec-file-upload` → Dropzone
 - `.dataspec-preview-table` → Data table

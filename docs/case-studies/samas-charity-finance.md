@@ -1,4 +1,4 @@
-# 🕌 Case Study: SAMAS Charity Finance
+# 🕌 Case Study: saMas Charity Finance
 
 > How a non-profit educational charity achieved enterprise-grade data operations with DataSpec Engine.
 
@@ -16,7 +16,7 @@
 
 ## 📋 Executive Summary
 
-**SAMAS Charity Finance** is a comprehensive financial management platform for educational charities. By integrating DataSpec Engine, they achieved:
+**saMas Charity Finance** is a comprehensive financial management platform for educational charities. By integrating DataSpec Engine, they achieved:
 
 | Metric | Result |
 |--------|--------|
@@ -32,7 +32,7 @@
 
 ### Business Context
 
-SAMAS manages financial operations for multiple educational schools, tracking:
+saMas manages financial operations for multiple educational schools, tracking:
 
 - **Donations** from individual and corporate donors
 - **Transactions** across multiple bank accounts
@@ -66,7 +66,7 @@ SAMAS manages financial operations for multiple educational schools, tracking:
 
 ```
 ┌──────────────────────────────────────────────────────────────────────────┐
-│                        SAMAS Charity Finance                              │
+│                        saMas Charity Finance                              │
 │  ┌────────────────────────────────────────────────────────────────────┐  │
 │  │                    Existing Application                             │  │
 │  │  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ ┌─────────────┐  │  │
@@ -108,7 +108,7 @@ SAMAS manages financial operations for multiple educational schools, tracking:
 
 ### Entity Configuration
 
-SAMAS configured 42 entities across 6 categories:
+saMas configured 42 entities across 6 categories:
 
 | Category | Entities | Operation Mode | Example |
 |----------|----------|----------------|---------|
@@ -177,7 +177,7 @@ VALUES (
 
 ### Phase 2: Authentication Bridge
 
-Created custom hook to bridge SAMAS auth with DataSpec:
+Created custom hook to bridge saMas auth with DataSpec:
 
 ```typescript
 // src/hooks/useDataSpecAuth.ts
@@ -231,7 +231,7 @@ const DataSpecProvider = ({ children }) => {
 
 ### Phase 4: YAML Specifications
 
-Created heavily-commented YAML specs for SAMAS entities:
+Created heavily-commented YAML specs for saMas entities:
 
 ```yaml
 # =============================================================================
@@ -351,7 +351,7 @@ columns:
 | 🔧 Auth integration | Custom `useDataSpecAuth` hook bridged systems |
 | 🔧 Request exhaustion | Custom provider with caching and deduplication |
 | 🔧 Theme matching | BEM-to-Tailwind CSS mapping layer |
-| 🔧 Edge function auth | Modified to use SAMAS's `user_roles_view` |
+| 🔧 Edge function auth | Modified to use saMas's `user_roles_view` |
 
 ### Recommendations for Similar Projects
 
@@ -405,4 +405,4 @@ Ready to achieve similar results? DataSpec Engine provides:
 
 ---
 
-*Case study based on production deployment of DataSpec Engine at SAMAS Charity Finance, December 2025.*
+*Case study based on production deployment of DataSpec Engine at saMas Charity Finance, December 2025.*

@@ -190,7 +190,7 @@ DataSpec Engine solves data challenges across industries:
 
 ## 📋 Case Studies
 
-### 🕌 SAMAS Charity Finance (Production)
+### 🕌 saMas Charity Finance (Production)
 
 Real-world deployment managing financial operations for educational charities:
 
@@ -428,7 +428,7 @@ Coverage thresholds are enforced in CI - PRs with coverage below 70% will fail.
 
 | Case Study | Industry | Scale |
 |------------|----------|-------|
-| [SAMAS Charity Finance](docs/case-studies/samas-charity-finance.md) | 🕌 Non-Profit | 42 entities, 5 roles |
+| [saMas Charity Finance](docs/case-studies/samas-charity-finance.md) | 🕌 Non-Profit | 42 entities, 5 roles |
 
 ---
 

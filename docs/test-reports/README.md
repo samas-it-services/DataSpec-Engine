@@ -19,6 +19,11 @@ Located in `./screenshots/`:
 | [unit-tests-summary.txt](./screenshots/unit-tests-summary.txt) | Complete unit test execution output |
 | [e2e-tests-configured.txt](./screenshots/e2e-tests-configured.txt) | E2E test suite details and configuration |
 | [build-verification.txt](./screenshots/build-verification.txt) | TypeScript build verification |
+| [export-options.png](./screenshots/export-options.png) | Export UI screenshot |
+| [masking-toggle.png](./screenshots/masking-toggle.png) | Masking toggle UI screenshot |
+| [import-preview.png](./screenshots/import-preview.png) | Import preview UI screenshot |
+| [validation-errors.png](./screenshots/validation-errors.png) | Validation errors UI screenshot |
+| [error-handling.png](./screenshots/error-handling.png) | Error handling UI screenshot |
 
 ## Quick Summary
 
@@ -31,6 +36,12 @@ Located in `./screenshots/`:
 | Code Coverage (Core) | 94.26% |
 | Code Coverage (Adapter) | 97.22% |
 | Build Status | Passing |
+
+## Related Documentation
+
+- [Testing Guide](../TESTING.md) - How to run all tests
+- [Test Results](../TEST-RESULTS.md) - Coverage and test history
+- [E2E Quick Start](../../e2e/README.md) - E2E test setup
 
 ## Last Updated
 

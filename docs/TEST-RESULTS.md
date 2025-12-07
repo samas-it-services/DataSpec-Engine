@@ -186,6 +186,7 @@ turbo test --cache
 
 ## Additional Resources
 
+- [Testing Guide](./TESTING.md) - How to run all tests (unit, E2E, integration)
 - [E2E Test Report](./test-reports/E2E-TEST-REPORT.md) - Technical E2E details
 - [Validation Report](./test-reports/VALIDATION-REPORT.md) - Business summary
 - [QA Certification](./test-reports/QA-CERTIFICATION.md) - Formal sign-off

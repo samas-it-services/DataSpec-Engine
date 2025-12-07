@@ -61,6 +61,7 @@ See [Getting Started](./docs/getting-started.md) for full setup instructions.
 | [Getting Started](./docs/getting-started.md) | Installation and basic usage |
 | [API Reference](./docs/api-reference.md) | Component and hook APIs |
 | [YAML Spec Guide](./docs/yaml-spec-guide.md) | Specification format |
+| [Testing Guide](./docs/TESTING.md) | How to run unit and E2E tests |
 | [Test Results](./docs/TEST-RESULTS.md) | Coverage and test status |
 | [Test Reports](./docs/test-reports/) | E2E, validation & QA certification |
 | [Implementation Plan](./docs/IMPLEMENTATION-PLAN.md) | Development progress |
@@ -101,9 +102,14 @@ npm test
 npm test --workspace=@dataspec-engine/core
 npm test --workspace=@dataspec-engine/react
 
+# Run E2E tests (Playwright)
+cd e2e && npm test
+
 # Build all packages
 npm run build
 ```
+
+See [Testing Guide](./docs/TESTING.md) for comprehensive testing instructions.
 
 ---
 

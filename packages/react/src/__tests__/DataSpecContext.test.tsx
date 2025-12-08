@@ -106,9 +106,10 @@ describe('DataSpecContext', () => {
         { id: '2', name: 'Entity 2', table: 'table2' },
       ];
 
+      // API returns { success: boolean, data: { entities: [...] } } format
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
-        json: async () => mockEntities,
+        json: async () => ({ success: true, data: { entities: mockEntities } }),
       });
 
       let contextValue: ReturnType<typeof useDataSpecContext> | null = null;
@@ -162,10 +163,11 @@ describe('DataSpecContext', () => {
       const mockEntity = { id: '1', name: 'Entity 1', table: 'table1' };
       const mockSpecs = [{ id: 's1', name: 'Spec 1', entity: '1', version: '1.0', createdAt: new Date(), updatedAt: new Date() }];
 
+      // API returns { success: boolean, data: { specs: [...] } } format
       (global.fetch as jest.Mock)
         .mockResolvedValueOnce({
           ok: true,
-          json: async () => mockSpecs,
+          json: async () => ({ success: true, data: { specs: mockSpecs } }),
         });
 
       let contextValue: ReturnType<typeof useDataSpecContext> | null = null;

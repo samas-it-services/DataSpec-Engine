@@ -1,9 +1,13 @@
 /**
  * EntitySelector Component Tests
+ *
+ * Note: Tests use waitFor and act() to handle async state updates properly
+ * in React 18 Strict Mode. The DataSpecProvider context performs async
+ * operations that update state after render.
  */
 
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import { DataSpecProvider } from '../context/DataSpecContext';
 import { EntitySelector } from '../components/EntitySelector';
 import { DataSpecProviderConfig } from '../types';
@@ -23,12 +27,16 @@ const mockEntities = [
   { id: '3', name: 'Donors', description: 'Donor information', table: 'donors', specCount: 2 },
 ];
 
-const renderWithProvider = (ui: React.ReactElement) => {
-  return render(
-    <DataSpecProvider config={mockConfig}>
-      {ui}
-    </DataSpecProvider>
-  );
+const renderWithProvider = async (ui: React.ReactElement) => {
+  let result: ReturnType<typeof render>;
+  await act(async () => {
+    result = render(
+      <DataSpecProvider config={mockConfig}>
+        {ui}
+      </DataSpecProvider>
+    );
+  });
+  return result!;
 };
 
 describe('EntitySelector', () => {
@@ -37,24 +45,31 @@ describe('EntitySelector', () => {
     (global.fetch as jest.Mock).mockReset();
   });
 
+  afterEach(async () => {
+    // Allow any pending state updates to complete
+    await act(async () => {
+      await new Promise(resolve => setTimeout(resolve, 0));
+    });
+  });
+
   describe('dropdown mode', () => {
-    it('should render dropdown with placeholder', () => {
-      renderWithProvider(<EntitySelector mode="dropdown" />);
+    it('should render dropdown with placeholder', async () => {
+      await renderWithProvider(<EntitySelector mode="dropdown" />);
 
       const select = screen.getByRole('combobox');
       expect(select).toBeInTheDocument();
       expect(select).toHaveValue('');
     });
 
-    it.skip('should show custom placeholder', () => {
+    it.skip('should show custom placeholder', async () => {
       // Skipped: flaky due to async loading state timing
-      renderWithProvider(<EntitySelector mode="dropdown" placeholder="Choose entity" />);
+      await renderWithProvider(<EntitySelector mode="dropdown" placeholder="Choose entity" />);
 
       expect(screen.getByText('Choose entity')).toBeInTheDocument();
     });
 
-    it('should be disabled when disabled prop is true', () => {
-      renderWithProvider(<EntitySelector mode="dropdown" disabled />);
+    it('should be disabled when disabled prop is true', async () => {
+      await renderWithProvider(<EntitySelector mode="dropdown" disabled />);
 
       const select = screen.getByRole('combobox');
       expect(select).toBeDisabled();
@@ -66,7 +81,7 @@ describe('EntitySelector', () => {
         json: async () => mockEntities,
       });
 
-      renderWithProvider(<EntitySelector mode="dropdown" autoLoad />);
+      await renderWithProvider(<EntitySelector mode="dropdown" autoLoad />);
 
       await waitFor(() => {
         expect(global.fetch).toHaveBeenCalledWith(
@@ -82,7 +97,7 @@ describe('EntitySelector', () => {
         json: async () => mockEntities,
       });
 
-      renderWithProvider(<EntitySelector mode="dropdown" autoLoad />);
+      await renderWithProvider(<EntitySelector mode="dropdown" autoLoad />);
 
       await waitFor(() => {
         expect(screen.getByText(/Students/)).toBeInTheDocument();
@@ -97,7 +112,7 @@ describe('EntitySelector', () => {
         json: async () => mockEntities,
       });
 
-      renderWithProvider(<EntitySelector mode="dropdown" autoLoad showSpecCount />);
+      await renderWithProvider(<EntitySelector mode="dropdown" autoLoad showSpecCount />);
 
       await waitFor(() => {
         expect(screen.getByText(/Students \(3 specs\)/)).toBeInTheDocument();
@@ -116,14 +131,16 @@ describe('EntitySelector', () => {
           json: async () => [],
         });
 
-      renderWithProvider(<EntitySelector mode="dropdown" autoLoad onSelect={onSelect} />);
+      await renderWithProvider(<EntitySelector mode="dropdown" autoLoad onSelect={onSelect} />);
 
       await waitFor(() => {
         expect(screen.getByText(/Students/)).toBeInTheDocument();
       });
 
       const select = screen.getByRole('combobox');
-      fireEvent.change(select, { target: { value: '1' } });
+      await act(async () => {
+        fireEvent.change(select, { target: { value: '1' } });
+      });
 
       await waitFor(() => {
         expect(onSelect).toHaveBeenCalledWith(
@@ -140,7 +157,7 @@ describe('EntitySelector', () => {
         json: async () => mockEntities,
       });
 
-      renderWithProvider(<EntitySelector mode="list" autoLoad />);
+      await renderWithProvider(<EntitySelector mode="list" autoLoad />);
 
       await waitFor(() => {
         expect(screen.getByRole('list')).toBeInTheDocument();
@@ -155,7 +172,7 @@ describe('EntitySelector', () => {
         json: async () => [],
       });
 
-      renderWithProvider(<EntitySelector mode="list" autoLoad />);
+      await renderWithProvider(<EntitySelector mode="list" autoLoad />);
 
       await waitFor(() => {
         expect(screen.getByText('No entities available')).toBeInTheDocument();
@@ -168,7 +185,7 @@ describe('EntitySelector', () => {
         json: async () => mockEntities,
       });
 
-      renderWithProvider(<EntitySelector mode="list" autoLoad showDescription />);
+      await renderWithProvider(<EntitySelector mode="list" autoLoad showDescription />);
 
       await waitFor(() => {
         expect(screen.getByText('Student records')).toBeInTheDocument();
@@ -178,7 +195,7 @@ describe('EntitySelector', () => {
     it('should show loading state', async () => {
       (global.fetch as jest.Mock).mockImplementation(() => new Promise(() => {}));
 
-      renderWithProvider(<EntitySelector mode="list" autoLoad />);
+      await renderWithProvider(<EntitySelector mode="list" autoLoad />);
 
       expect(screen.getByText('Loading entities...')).toBeInTheDocument();
     });
@@ -190,7 +207,7 @@ describe('EntitySelector', () => {
         json: async () => ({ message: 'Failed to load' }),
       });
 
-      renderWithProvider(<EntitySelector mode="list" autoLoad />);
+      await renderWithProvider(<EntitySelector mode="list" autoLoad />);
 
       await waitFor(() => {
         expect(screen.getByText('Failed to load')).toBeInTheDocument();
@@ -206,7 +223,7 @@ describe('EntitySelector', () => {
         json: async () => mockEntities,
       });
 
-      renderWithProvider(<EntitySelector mode="cards" autoLoad />);
+      await renderWithProvider(<EntitySelector mode="cards" autoLoad />);
 
       await waitFor(() => {
         const buttons = screen.getAllByRole('button');
@@ -225,14 +242,16 @@ describe('EntitySelector', () => {
           json: async () => [],
         });
 
-      renderWithProvider(<EntitySelector mode="cards" autoLoad />);
+      await renderWithProvider(<EntitySelector mode="cards" autoLoad />);
 
       await waitFor(() => {
         expect(screen.getByText('Students')).toBeInTheDocument();
       });
 
       const studentCard = screen.getByText('Students').closest('button');
-      fireEvent.click(studentCard!);
+      await act(async () => {
+        fireEvent.click(studentCard!);
+      });
 
       await waitFor(() => {
         expect(studentCard).toHaveClass('dataspec-entity-selector__card--selected');
@@ -253,7 +272,7 @@ describe('EntitySelector', () => {
         </div>
       );
 
-      renderWithProvider(
+      await renderWithProvider(
         <EntitySelector mode="list" autoLoad renderEntity={customRender} />
       );
 

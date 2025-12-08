@@ -4,9 +4,25 @@
 
 > Transform messy CSV imports into reliable, auditable, secure data operations.
 
-[![Tests](https://img.shields.io/badge/tests-392%20passing-brightgreen)](#-testing--quality-assurance)
+[![Tests](https://img.shields.io/badge/tests-434%20passing-brightgreen)](#-testing--quality-assurance)
 [![Coverage](https://img.shields.io/badge/coverage-94%25-brightgreen)](#-test-coverage)
 [![Packages](https://img.shields.io/badge/packages-4%20complete-blue)](#-packages)
+[![Version](https://img.shields.io/badge/version-0.3.0-blue)](#-packages)
+
+---
+
+## 🆕 What's New in v0.3.0
+
+**Entity Operation Modes & Role-Based Permissions** - Enterprise-grade access control:
+
+| Feature | Description |
+|---------|-------------|
+| 🔒 **Operation Modes** | Control entity access: `full`, `export_only`, `view_only`, `import_only` |
+| 👥 **Role-Based Permissions** | Separate roles for view, import, and export per entity |
+| 📁 **Entity Categories** | Organize entities: `core`, `financial`, `audit`, `system`, `link` |
+| ✅ **React 18 Compatibility** | Fixed async test patterns for Strict Mode |
+
+[View full changelog →](CHANGELOG.md)
 
 ---
 

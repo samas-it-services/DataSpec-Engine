@@ -10,19 +10,19 @@ const NODE_ENV = process.env.NODE_ENV || 'development';
 async function startServer() {
   console.log(`Starting DataSpec API server in ${NODE_ENV} mode...`);
 
-  // In production, create actual database adapter
-  // For now, use mock adapter for development
+  // Create database adapter based on environment
+  // Production: Use SupabaseAdapter from @samas-it-services/dataspec-supabase-adapter
+  // Development: Use mock adapter for local testing
   let dbAdapter;
 
   if (NODE_ENV === 'production') {
-    // TODO: Create Supabase adapter
-    // const supabase = createClient(
-    //   process.env.SUPABASE_URL!,
-    //   process.env.SUPABASE_SERVICE_KEY!
-    // );
+    // For production, configure SupabaseAdapter:
+    // import { createClient } from '@supabase/supabase-js';
+    // import { SupabaseAdapter } from '@samas-it-services/dataspec-supabase-adapter';
+    // const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_KEY!);
     // dbAdapter = new SupabaseAdapter(supabase);
     dbAdapter = createMockDbAdapter();
-    console.log('Warning: Using mock database adapter in production');
+    console.log('Warning: Using mock database adapter in production - configure SupabaseAdapter for real data');
   } else {
     dbAdapter = createMockDbAdapter();
     console.log('Using mock database adapter for development');

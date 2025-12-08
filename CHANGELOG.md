@@ -38,11 +38,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [0.3.0] - 2025-12-08
+## [0.3.0] - 2025-12-07
 
 ### Entity Operation Modes & Role-Based Permissions
 
-This release adds comprehensive entity-level access control with operation modes and role-based permissions.
+This release adds comprehensive entity-level access control with operation modes and role-based permissions, along with test improvements for React 18 Strict Mode compatibility.
 
 #### Added - Operation Modes
 - **OperationMode enum** - Controls which operations are allowed on an entity:
@@ -92,6 +92,11 @@ This release adds comprehensive entity-level access control with operation modes
 - 42 new tests in `EntityPermissions.test.ts`
 - Tests for all operation modes and permission combinations
 - Real-world scenarios (audit tables, system tables, standard entities)
+
+#### Fixed - React 18 Strict Mode Compatibility
+- **EntitySelector tests** - Fixed `act()` warnings by wrapping async renders and user interactions
+- **Test cleanup** - Added afterEach hook to allow pending state updates to complete
+- **Server.ts** - Updated stale TODO comment with proper SupabaseAdapter configuration guidance
 
 #### Added - Documentation
 - `docs/operation-modes.md` - Operation modes guide
